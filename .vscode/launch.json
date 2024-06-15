@@ -1,0 +1,34 @@
+{
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "sourceLanguages": ["swift"],
+      "args": ["swift"],
+      "cwd": "${workspaceFolder:swiftvars}",
+      "name": "Debug swiftvars (swift)",
+      "program": "${workspaceFolder:swiftvars}/.build/debug/swiftvars",
+      "preLaunchTask": "swift: Build Debug swiftvars"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "sourceLanguages": ["swift"],
+      "args": [],
+      "cwd": "${workspaceFolder:swiftvars}",
+      "name": "Debug swiftvars",
+      "program": "${workspaceFolder:swiftvars}/.build/debug/swiftvars",
+      "preLaunchTask": "swift: Build Debug swiftvars"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "sourceLanguages": ["swift"],
+      "args": [],
+      "cwd": "${workspaceFolder:swiftvars}",
+      "name": "Release swiftvars",
+      "program": "${workspaceFolder:swiftvars}/.build/release/swiftvars",
+      "preLaunchTask": "swift: Build Release swiftvars"
+    }
+  ]
+}
