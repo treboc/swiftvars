@@ -48,6 +48,12 @@ final class MapperMappingErrorTests: XCTestCase {
     XCTAssertNotEqual(error1, error2)
   }
 
+  func test_inequality_invalidValue() {
+    let error1 = MappingError.invalidValue(123)
+    let error2 = MappingError.invalidCollection("Collection1")
+    XCTAssertNotEqual(error1, error2)
+  }
+
   func test_invalidValueDescription() {
     let error = MappingError.invalidValue(123)
     XCTAssertEqual(error.description, "Invalid value: 123")
