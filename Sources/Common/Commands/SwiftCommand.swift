@@ -21,16 +21,25 @@ struct SwiftCommand: ParsableCommand {
     let swiftModel = try Mapper.toSwiftModel(variablesModel)
 
     let renderedBaseFile = try renderBaseFile(model: swiftModel)
-    let renderedColorFile = try renderColorFile(model: swiftModel)
-    let renderedColorValuesFile = try renderColorValuesFile(model: swiftModel)
-    let renderedRadiusFile = try renderRadiusFile(model: swiftModel)
-    let renderedSpacingsFile = try renderSpacingsFile(model: swiftModel)
+    let renderedBaseFileDest = Path(components: [config.destinationDir, SwiftVarTemplate.swiftBaseFile.outputFileName])
 
-    try renderedBaseFile.write(toFile: "/Users/treboc/SWIFTVARS_TESTDIR/UITheme.swift", atomically: true, encoding: .utf8)
-    try renderedColorFile.write(toFile: "/Users/treboc/SWIFTVARS_TESTDIR/UITheme+Colors.swift", atomically: true, encoding: .utf8)
-    try renderedColorValuesFile.write(toFile: "/Users/treboc/SWIFTVARS_TESTDIR/UITheme+ColorValues.swift", atomically: true, encoding: .utf8)
-    try renderedRadiusFile.write(toFile: "/Users/treboc/SWIFTVARS_TESTDIR/UITheme+Radius.swift", atomically: true, encoding: .utf8)
-    try renderedSpacingsFile.write(toFile: "/Users/treboc/SWIFTVARS_TESTDIR/UITheme+Spacings.swift", atomically: true, encoding: .utf8)
+    let renderedColorFile = try renderColorFile(model: swiftModel)
+    let renderedColorFileDest = Path(components: [config.destinationDir, SwiftVarTemplate.swiftColorsFile.outputFileName])
+
+    let renderedColorValuesFile = try renderColorValuesFile(model: swiftModel)
+    let renderedColorValuesFileDest = Path(components: [config.destinationDir, SwiftVarTemplate.swiftColorValuesFile.outputFileName])
+
+    let renderedRadiusFile = try renderRadiusFile(model: swiftModel)
+    let renderedRadiusFileDest = Path(components: [config.destinationDir, SwiftVarTemplate.swiftRadiusFile.outputFileName])
+
+    let renderedSpacingsFile = try renderSpacingsFile(model: swiftModel)
+    let renderedSpacingsFileDest = Path(components: [config.destinationDir, SwiftVarTemplate.swiftSpacingFile.outputFileName])
+
+    try renderedBaseFile.write(toFile: renderedBaseFileDest.string, atomically: true, encoding: .utf8)
+    try renderedColorFile.write(toFile: renderedColorFileDest.string, atomically: true, encoding: .utf8)
+    try renderedColorValuesFile.write(toFile: renderedColorValuesFileDest.string, atomically: true, encoding: .utf8)
+    try renderedRadiusFile.write(toFile: renderedRadiusFileDest.string, atomically: true, encoding: .utf8)
+    try renderedSpacingsFile.write(toFile: renderedSpacingsFileDest.string, atomically: true, encoding: .utf8)
 
     print("Done!")
   }
@@ -56,7 +65,7 @@ private extension SwiftCommand {
 
   func renderBaseFile(model: SwiftModel) throws -> String {
     let context: [String: Any] = [
-      "version": model.version,
+      "version": model.version
     ]
 
     return try Template.renderTemplate(.swiftBaseFile, platform: .swift, context: context)
@@ -65,7 +74,7 @@ private extension SwiftCommand {
   func renderColorFile(model: SwiftModel) throws -> String {
     let context: [String: Any] = [
       "version": model.version,
-      "colors": model.colorTokens,
+      "colors": model.colorTokens
     ]
 
     return try Template.renderTemplate(.swiftColorsFile, platform: .swift, context: context)
@@ -74,7 +83,7 @@ private extension SwiftCommand {
   func renderColorValuesFile(model: SwiftModel) throws -> String {
     let context: [String: Any] = [
       "version": model.version,
-      "colors": model.colorValues,
+      "colors": model.colorValues
     ]
 
     return try Template.renderTemplate(.swiftColorValuesFile, platform: .swift, context: context)
@@ -83,7 +92,7 @@ private extension SwiftCommand {
   func renderRadiusFile(model: SwiftModel) throws -> String {
     let context: [String: Any] = [
       "version": model.version,
-      "radii": model.radii,
+      "radii": model.radii
     ]
 
     return try Template.renderTemplate(.swiftRadiusFile, platform: .swift, context: context)
@@ -92,7 +101,7 @@ private extension SwiftCommand {
   func renderSpacingsFile(model: SwiftModel) throws -> String {
     let context: [String: Any] = [
       "version": model.version,
-      "spacings": model.spacings,
+      "spacings": model.spacings
     ]
 
     return try Template.renderTemplate(.swiftSpacingFile, platform: .swift, context: context)

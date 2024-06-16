@@ -23,7 +23,8 @@ struct KotlinCommand: ParsableCommand {
     let kotlinModel = try Mapper.toKotlinModel(variablesModel)
 
     let renderedThemeFile = try renderThemeFile(model: kotlinModel)
-    try renderedThemeFile.write(toFile: "/Users/treboc/SWIFTVARS_TESTDIR/UITheme.kt", atomically: true, encoding: .utf8)
+    let renderedThemeFileDest = Path(components: [config.destinationDir, SwiftVarTemplate.kotlinThemeFile.outputFileName])
+    try renderedThemeFile.write(toFile: renderedThemeFileDest.string, atomically: true, encoding: .utf8)
 
     print("Done!")
   }
