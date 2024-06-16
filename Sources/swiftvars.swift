@@ -13,7 +13,7 @@ struct SwiftVARS: ParsableCommand {
     abstract: "SwiftVARS",
     subcommands: [
       KotlinCommand.self,
-      SwiftCommand.self,
+      SwiftCommand.self
     ]
   )
 }

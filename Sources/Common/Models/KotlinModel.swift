@@ -10,7 +10,7 @@ struct KotlinModel {
   let colorValues: [ColorValue]
   let radii: [Radius]
   let spacings: [Spacing]
-  
+
   struct Radius {
     let varName: String
     let radius: Int

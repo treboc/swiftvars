@@ -16,7 +16,7 @@ final class ValidatorTests: XCTestCase {
       "#FFFFFFFF",
       "#12345678",
       "#abcdef12",
-      "#ABCDEF34",
+      "#ABCDEF34"
     ]
 
     XCTAssertNoThrow(try validateHexColors(validHexColors))
@@ -29,7 +29,7 @@ final class ValidatorTests: XCTestCase {
       "#12345",
       "#1234567",
       "#12345678",
-      "#123456789",
+      "#123456789"
     ]
 
     XCTAssertThrowsError(try validateHexColors(invalidLengthHexColors)) { error in
@@ -46,7 +46,7 @@ final class ValidatorTests: XCTestCase {
 
   func test_validateHexColor_missingHash() {
     let missingHashHexColors = [
-      "FFFFFF",
+      "FFFFFF"
     ]
 
     XCTAssertThrowsError(try validateHexColors(missingHashHexColors)) { error in
@@ -69,7 +69,7 @@ final class ValidatorTests: XCTestCase {
       "#1234",
       "#12345",
       "#FFFFFFFZ",
-      "# ABCDE",
+      "# ABCDE"
     ]
 
     XCTAssertThrowsError(try validateHexColors(nonHexCharacterHexColors)) { error in

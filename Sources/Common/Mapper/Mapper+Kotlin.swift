@@ -135,7 +135,7 @@ private extension Mapper {
     guard let rawRadiusValue else {
       throw MappingError.noRadiusValue
     }
-    
+
     return .init(
       varName: name.toSpacingVarName(),
       spacing: rawRadiusValue
