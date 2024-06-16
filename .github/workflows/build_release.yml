@@ -17,6 +17,4 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build
-      run: swift build -c release
-    - name: Test
-      run: swift test -v
+      run: xcodebuild "-scheme" "swiftvars" "GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES" "GCC_GENERATE_TEST_COVERAGE_FILES=YES" "clean" "build" "test" "-destination" "platform=macOS,arch=arm64e" "COMPILER_INDEX_STORE_ENABLE=NO" "CODE_SIGNING_ALLOWED=NO" "-skipPackagePluginValidation"
