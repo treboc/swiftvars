@@ -11,8 +11,8 @@ import Stencil
 // 5. Create files with the help of stancil
 // 6. Move created files to destination
 
-// TODO: - Add Stancil templates!
 // TODO: - Add unit tests!
+// TODO: - Info on empty fields!
 
 @main
 struct MainCLI: ParsableCommand {
@@ -43,7 +43,11 @@ struct MainCLI: ParsableCommand {
 
       print("Done!")
     case .kotlin:
-      fatalError("Not implemented yet")
+      let variablesModel = try decodeVariablesFile(sourcePath)
+      let kotlinModel = try Mapper.toKotlinModel(variablesModel)
+
+      let renderedThemeFile = try renderThemeFile(model: kotlinModel)
+      try renderedThemeFile.write(toFile: "/Users/treboc/SWIFTVARS_TESTDIR/UITheme.kt", atomically: true, encoding: .utf8)
     }
   }
 
@@ -55,12 +59,28 @@ struct MainCLI: ParsableCommand {
     return model
   }
 
+  // Kotlin
+
+  func renderThemeFile(model: KotlinModel) throws -> String {
+    let context: [String: Any] = [
+      "packageName": "de.enercity.app.android.ui.theme",
+      "version": model.version,
+      "colors": model.colorValues,
+      "radii": model.radii,
+      "spacings": model.spacings
+    ]
+
+    return try Template.renderTemplate(.kotlinThemeFile, platform: .kotlin, context: context)
+  }
+
+  // Swift
+
   func renderBaseFile(model: SwiftModel) throws -> String {
     let context: [String: Any] = [
       "version": model.version
     ]
 
-    return try Template.renderTemplate(.swiftBaseFile, context: context)
+    return try Template.renderTemplate(.swiftBaseFile, platform: .swift, context: context)
   }
 
   func renderColorFile(model: SwiftModel) throws -> String {
@@ -69,7 +89,7 @@ struct MainCLI: ParsableCommand {
       "colors": model.colorTokens
     ]
 
-    return try Template.renderTemplate(.swiftColorsFile, context: context)
+    return try Template.renderTemplate(.swiftColorsFile, platform: .swift, context: context)
   }
 
   func renderColorValuesFile(model: SwiftModel) throws -> String {
@@ -78,7 +98,7 @@ struct MainCLI: ParsableCommand {
       "colors": model.colorValues
     ]
 
-    return try Template.renderTemplate(.swiftColorValuesFile, context: context)
+    return try Template.renderTemplate(.swiftColorValuesFile, platform: .swift, context: context)
   }
 
   func renderRadiusFile(model: SwiftModel) throws -> String {
@@ -87,7 +107,7 @@ struct MainCLI: ParsableCommand {
       "radii": model.radii
     ]
 
-    return try Template.renderTemplate(.swiftRadiusFile, context: context)
+    return try Template.renderTemplate(.swiftRadiusFile, platform: .swift, context: context)
   }
 
   func renderSpacingsFile(model: SwiftModel) throws -> String {
@@ -96,6 +116,6 @@ struct MainCLI: ParsableCommand {
       "spacings": model.spacings
     ]
 
-    return try Template.renderTemplate(.swiftSpacingFile, context: context)
+    return try Template.renderTemplate(.swiftSpacingFile, platform: .swift, context: context)
   }
 }

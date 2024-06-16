@@ -4,20 +4,30 @@
 
 import Foundation
 
-struct SwiftModel {
+struct KotlinModel {
   let version: String
   let colorTokens: [ColorToken]
   let colorValues: [ColorValue]
   let radii: [Radius]
   let spacings: [Spacing]
-
+  
   struct Radius {
     let varName: String
-    let radius: Double
+    let radius: Int
   }
 
   struct Spacing {
     let varName: String
-    let spacing: Double
+    let spacing: Int
   }
+}
+
+struct ColorToken {
+  let varName: String
+  let colorName: String
+}
+
+struct ColorValue {
+  let varName: String
+  let hexValue: String
 }
