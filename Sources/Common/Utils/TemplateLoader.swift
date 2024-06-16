@@ -5,8 +5,6 @@
 import PathKit
 import Stencil
 
-private let kStencilFileExtension = ".stencil"
-
 enum SwiftVarTemplate {
   case kotlinThemeFile
   case swiftBaseFile
@@ -29,8 +27,10 @@ enum SwiftVarTemplate {
       "UITheme+Spacing"
     }
 
-    return fileName + kStencilFileExtension
+    return fileName + Self.kStencilFileExtension
   }
+
+  static let kStencilFileExtension = ".stencil"
 }
 
 extension Template {
