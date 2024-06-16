@@ -5,6 +5,9 @@
 import PathKit
 import Stencil
 
+private let kFolderName = "swift"
+private let kStencilFileExtension = ".stencil"
+
 enum SwiftVarTemplate: String {
   case swiftBaseFile = "UITheme"
   case swiftColorsFile = "UITheme+Colors"
@@ -13,7 +16,7 @@ enum SwiftVarTemplate: String {
   case swiftSpacingFile = "UITheme+Spacing"
 
   var fileNameWithExtension: String {
-    rawValue + ".stencil"
+    rawValue + kStencilFileExtension
   }
 }
 
@@ -21,7 +24,8 @@ extension Template {
   static let environment = Environment(loader: FileSystemLoader(paths: [.templatesPath]), trimBehaviour: .smart)
 
   static func loadTemplate(_ template: SwiftVarTemplate) throws -> Template {
-    return try environment.loadTemplate(name: template.fileNameWithExtension)
+    let path = Path(components: [kFolderName, template.fileNameWithExtension])
+    return try environment.loadTemplate(name: path.string)
   }
 
   static func renderTemplate(_ template: SwiftVarTemplate, context: [String: Any] = [:]) throws -> String {
