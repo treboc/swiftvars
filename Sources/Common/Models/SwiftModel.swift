@@ -7,6 +7,7 @@ import Foundation
 struct SwiftModel {
   let version: String
   let colorTokens: [ColorToken]
+  let colorValues: [ColorValue]
   let radii: [Radius]
   let spacings: [Spacing]
 }
@@ -14,6 +15,11 @@ struct SwiftModel {
 struct ColorToken {
   let varName: String
   let colorName: String
+}
+
+struct ColorValue {
+  let varName: String
+  let hexValue: String
 }
 
 struct Radius {

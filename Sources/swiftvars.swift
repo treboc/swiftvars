@@ -31,11 +31,13 @@ struct MainCLI: ParsableCommand {
 
       let renderedBaseFile = try renderBaseFile(model: swiftModel)
       let renderedColorFile = try renderColorFile(model: swiftModel)
+      let renderedColorValuesFile = try renderColorValuesFile(model: swiftModel)
       let renderedRadiusFile = try renderRadiusFile(model: swiftModel)
       let renderedSpacingsFile = try renderSpacingsFile(model: swiftModel)
 
       try renderedBaseFile.write(toFile: "/Users/treboc/SWIFTVARS_TESTDIR/UITheme.swift", atomically: true, encoding: .utf8)
       try renderedColorFile.write(toFile: "/Users/treboc/SWIFTVARS_TESTDIR/UITheme+Colors.swift", atomically: true, encoding: .utf8)
+      try renderedColorValuesFile.write(toFile: "/Users/treboc/SWIFTVARS_TESTDIR/UITheme+ColorValues.swift", atomically: true, encoding: .utf8)
       try renderedRadiusFile.write(toFile: "/Users/treboc/SWIFTVARS_TESTDIR/UITheme+Radius.swift", atomically: true, encoding: .utf8)
       try renderedSpacingsFile.write(toFile: "/Users/treboc/SWIFTVARS_TESTDIR/UITheme+Spacings.swift", atomically: true, encoding: .utf8)
 
@@ -68,6 +70,15 @@ struct MainCLI: ParsableCommand {
     ]
 
     return try Template.renderTemplate(.swiftColorsFile, context: context)
+  }
+
+  func renderColorValuesFile(model: SwiftModel) throws -> String {
+    let context: [String: Any] = [
+      "version": model.version,
+      "colors": model.colorValues
+    ]
+
+    return try Template.renderTemplate(.swiftColorValuesFile, context: context)
   }
 
   func renderRadiusFile(model: SwiftModel) throws -> String {

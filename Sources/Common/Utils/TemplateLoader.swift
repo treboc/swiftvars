@@ -8,6 +8,7 @@ import Stencil
 enum SwiftVarTemplate: String {
   case swiftBaseFile = "UITheme"
   case swiftColorsFile = "UITheme+Colors"
+  case swiftColorValuesFile = "UITheme+ColorValues"
   case swiftRadiusFile = "UITheme+Radius"
   case swiftSpacingFile = "UITheme+Spacing"
 

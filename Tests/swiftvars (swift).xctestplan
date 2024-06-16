@@ -1,0 +1,34 @@
+{
+  "configurations" : [
+    {
+      "id" : "6ED19900-BB27-4767-9FBC-0255D69D653E",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "swift"
+      }
+    ],
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:",
+      "identifier" : "swiftvars",
+      "name" : "swiftvars"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "swiftvarsTests",
+        "name" : "swiftvarsTests"
+      }
+    }
+  ],
+  "version" : 1
+}

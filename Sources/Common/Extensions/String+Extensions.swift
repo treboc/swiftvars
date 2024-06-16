@@ -7,11 +7,14 @@ import Foundation
 extension String {
   // MARK: - Color Token
 
-  mutating func toColorTokenVarName() -> String {
-    replaceChars()
+  mutating func toColorTokenVarName(colorMode: ColorMode) -> String {
+    var parts = replaceChars()
       .split(separator: "/")
       .map(String.init)
-      .toLowerCamelCase()
+
+    parts.insert(colorMode.rawValue, at: 0)
+
+    return parts.toLowerCamelCase()
   }
 
   mutating func toColorTokenColorName() -> String {

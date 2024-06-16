@@ -8,6 +8,7 @@ enum MappingError: Error {
   case invalidValue(Codable)
   case invalidCollection(Codable)
   case noColorName
+  case noColorModeName(String)
   case noRadiusValue
 
   var description: String {
@@ -20,6 +21,9 @@ enum MappingError: Error {
 
     case .noColorName:
       "Unable to get colorName from value"
+
+    case let .noColorModeName(found):
+      "Unable to get colorModeName from value, found: \(found), expected: light/dark"
 
     case .noRadiusValue:
       "Unable to get radiusValue from value"

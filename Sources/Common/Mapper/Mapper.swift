@@ -6,6 +6,7 @@ import Foundation
 
 private enum Constants {
   static let kColorTokenCollectionName = "Color Token"
+  static let kColorValueCollectionName = "Primitives"
   static let kRadiusCollectionName = "Radius"
   static let kSpacingCollectionName = "Spacings"
 }
@@ -16,8 +17,23 @@ enum Mapper {
     let colorTokens = try model.collections
       .filter { $0.name == Constants.kColorTokenCollectionName }
       .flatMap(\.modes)
+    // TODO: Improve!
+      .map { mode in
+        try mode.variables
+          .map { variable in
+            guard let colorMode = ColorMode(rawValue: mode.name) else {
+              throw MappingError.noColorModeName(mode.name)
+            }
+            return try Mapper.toColorToken(variable, colorMode: colorMode)
+          }
+      }
+      .flatMap { $0 }
+
+    let colorValues = try model.collections
+      .filter { $0.name == Constants.kColorValueCollectionName }
+      .flatMap(\.modes)
       .flatMap(\.variables)
-      .map(toColorToken)
+      .map(toColorValue)
 
     let radii = try model.collections
       .filter { $0.name == Constants.kRadiusCollectionName }
@@ -36,6 +52,7 @@ enum Mapper {
     return SwiftModel(
       version: version,
       colorTokens: colorTokens,
+      colorValues: colorValues,
       radii: radii,
       spacings: spacings
     )
@@ -43,7 +60,7 @@ enum Mapper {
 }
 
 private extension Mapper {
-  static func toColorToken(_ variable: Variable) throws -> ColorToken {
+  static func toColorToken(_ variable: Variable, colorMode: ColorMode) throws -> ColorToken {
     var name = variable.name
     let rawColorName: String?
 
@@ -65,8 +82,31 @@ private extension Mapper {
     }
 
     return ColorToken(
-      varName: name.toColorTokenVarName(),
+      varName: name.toColorTokenVarName(colorMode: colorMode),
       colorName: rawColorName.toColorTokenColorName()
+    )
+  }
+
+  static func toColorValue(_ variable: Variable) throws -> ColorValue {
+    var name = variable.name
+    let rawColorValue: String?
+
+    switch variable.value {
+    case let .integer(int):
+      throw MappingError.invalidValue(int)
+    case let .string(string):
+      rawColorValue = string
+    case let .value(value):
+      throw MappingError.invalidValue(value.collection)
+    }
+
+    guard let rawColorValue else {
+      throw MappingError.noColorName
+    }
+
+    return ColorValue(
+      varName: name.toColorTokenColorName(),
+      hexValue: rawColorValue
     )
   }
 
