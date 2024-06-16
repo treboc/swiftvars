@@ -24,7 +24,7 @@ extension Mapper {
       rawColorName = value.name
     }
 
-    guard var rawColorName else {
+    guard var rawColorName, !rawColorName.isEmpty else {
       throw MappingError.noColorName
     }
 

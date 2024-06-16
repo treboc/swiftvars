@@ -6,7 +6,7 @@ import Files
 import PathKit
 import Yams
 
-private extension Constants {
+extension Constants {
   static let configFileName = ".swiftvars.yml"
 }
 

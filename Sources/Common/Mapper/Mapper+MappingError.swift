@@ -10,6 +10,7 @@ enum MappingError: Error {
   case noColorName
   case noColorModeName(String)
   case noRadiusValue
+  case noSpacings
 
   var description: String {
     switch self {
@@ -27,6 +28,36 @@ enum MappingError: Error {
 
     case .noRadiusValue:
       "Unable to get radiusValue from value"
+
+    case .noSpacings:
+      "No spacings found"
+    }
+  }
+}
+
+extension MappingError: Equatable {
+  static func == (lhs: MappingError, rhs: MappingError) -> Bool {
+    switch (lhs, rhs) {
+    case let (.invalidValue(lhsValue), .invalidValue(rhsValue)):
+      "\(lhsValue)" == "\(rhsValue)" // Simplified comparison
+
+    case let (.invalidCollection(lhsCollection), .invalidCollection(rhsCollection)):
+      "\(lhsCollection)" == "\(rhsCollection)" // Simplified comparison
+
+    case (.noColorName, .noColorName):
+      true
+
+    case let (.noColorModeName(lhsFound), .noColorModeName(rhsFound)):
+      lhsFound == rhsFound
+
+    case (.noRadiusValue, .noRadiusValue):
+      true
+
+    case (.noSpacings, .noSpacings):
+      true
+
+    default:
+      false
     }
   }
 }

@@ -9,10 +9,10 @@
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : false,
     "commandLineArgumentEntries" : [
       {
-        "argument" : "swift"
+        "argument" : "swift",
+        "enabled" : false
       }
     ],
     "targetForVariableExpansion" : {
@@ -23,6 +23,7 @@
   },
   "testTargets" : [
     {
+      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:",
         "identifier" : "swiftvarsTests",

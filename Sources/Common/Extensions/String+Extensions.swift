@@ -45,7 +45,7 @@ extension String {
 
 extension [String] {
   func toCamelCase() -> String {
-    return map(\.capitalized)
+    return map(\.capitalizeFirst)
       .joined()
   }
 
@@ -55,7 +55,7 @@ extension [String] {
     }
 
     let capitalizedPart = dropFirst()
-      .map(\.capitalized)
+      .map(\.capitalizeFirst)
       .joined()
 
     return firstPart.lowercased() + capitalizedPart
@@ -73,5 +73,11 @@ private extension String {
     }
 
     return self
+  }
+}
+
+private extension StringProtocol {
+  var capitalizeFirst: String {
+    prefix(1).capitalized + dropFirst()
   }
 }

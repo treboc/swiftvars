@@ -34,13 +34,16 @@ extension Mapper {
       .flatMap(\.variables)
       .map(toRadius)
 
-    // TODO: improve empty check
     let spacings = try model.collections
       .filter { $0.name == Constants.kSpacingCollectionName }
       .flatMap(\.modes)
       .first(where: { $0.name == "ios" })?
       .variables
-      .map(toSpacing) ?? []
+      .map(toSpacing)
+
+    guard let spacings else {
+      throw MappingError.noSpacings
+    }
 
     return SwiftModel(
       version: version,
