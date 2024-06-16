@@ -4,7 +4,7 @@
 
 import ArgumentParser
 
-enum PlatformArgument: String, CaseIterable, Codable, ExpressibleByArgument {
+enum PlatformArgument: String, EnumerableFlag {
   case swift
   case kotlin
 
