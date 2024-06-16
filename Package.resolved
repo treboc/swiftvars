@@ -1,5 +1,4 @@
 {
-  "originHash" : "f75a8854424b884eb0fdeecbeed3db864eef47f5f63c8481fe89e3807eebf564",
   "pins" : [
     {
       "identity" : "ansiterminal",
@@ -74,5 +73,5 @@
       }
     }
   ],
-  "version" : 3
+  "version" : 2
 }
