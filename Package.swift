@@ -11,7 +11,8 @@ let package = Package(
     .package(url: "https://github.com/JohnSundell/Files", from: .init(4, 2, 0)),
     .package(url: "https://github.com/pakLebah/ANSITerminal", from: .init(0, 0, 3)),
     .package(url: "https://github.com/stencilproject/Stencil.git", from: .init(0, 15, 1)),
-    .package(url: "https://github.com/realm/SwiftLint.git", from: .init(0, 55, 1))
+    .package(url: "https://github.com/lukepistrol/SwiftLintPlugin.git", from: .init(0, 55, 1)),
+    .package(url: "https://github.com/jpsim/Yams.git", from: "5.0.6")
   ],
   targets: [
     .executableTarget(
@@ -20,13 +21,14 @@ let package = Package(
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
         .product(name: "Files", package: "Files"),
         .product(name: "ANSITerminal", package: "ANSITerminal"),
-        .product(name: "Stencil", package: "Stencil")
+        .product(name: "Stencil", package: "Stencil"),
+        .product(name: "Yams", package: "Yams")
       ],
       resources: [
         .copy("templates")
       ],
       plugins: [
-        .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")
+        .plugin(name: "SwiftLint", package: "SwiftLintPlugin")
       ]
     ),
     .testTarget(

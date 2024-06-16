@@ -1,6 +1,6 @@
-disabled_rules:
-  - multiple_closures_with_trailing_closure
-  - nesting
+included:
+  - Sources
+  - Tests
 
 line_length: 140
 
@@ -22,8 +22,5 @@ identifier_name:
     - id
     - lhs
     - rhs
-
-excluded:
-  - RoadTrippin/Resources
 
 reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, junit, html, emoji, sonarqube, markdown)
