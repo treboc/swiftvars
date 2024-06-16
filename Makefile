@@ -12,3 +12,9 @@ test:
 
 clean:
 	rm -rf .build
+
+install: release
+	istall ./.build/release/swiftvars /usr/local/bin/swiftvars
+
+uninstall:
+  rm /usr/local/bin/swiftvars

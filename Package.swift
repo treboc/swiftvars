@@ -11,7 +11,7 @@ let package = Package(
     .package(url: "https://github.com/JohnSundell/Files", from: .init(4, 2, 0)),
     .package(url: "https://github.com/pakLebah/ANSITerminal", from: .init(0, 0, 3)),
     .package(url: "https://github.com/stencilproject/Stencil.git", from: .init(0, 15, 1)),
-    .package(url: "https://github.com/lukepistrol/SwiftLintPlugin.git", from: .init(0, 55, 1)),
+    .package(url: "https://github.com/lukepistrol/SwiftLintPlugin.git", exact: .init(0, 53, 0)),
     .package(url: "https://github.com/jpsim/Yams.git", from: "5.0.6")
   ],
   targets: [
