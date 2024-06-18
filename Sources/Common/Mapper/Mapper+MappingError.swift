@@ -7,6 +7,8 @@ import Foundation
 enum MappingError: Error {
   case invalidValue(Codable)
   case invalidCollection(Codable)
+  case noCollection(String)
+  case noMode(String)
   case noColorName
   case noColorModeName(String)
   case noRadiusValue
@@ -19,6 +21,12 @@ enum MappingError: Error {
 
     case let .invalidCollection(collection):
       "Invalid collection: \(collection)"
+
+    case let .noCollection(name):
+      "No collection found with name: \(name)"
+
+    case let .noMode(name):
+      "No mode found with name: \(name)"
 
     case .noColorName:
       "Unable to get colorName from value"

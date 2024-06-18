@@ -10,8 +10,7 @@ extension Mapper {
     let colorTokens = try model.collections
       .filter { $0.name == Constants.kColorTokenCollectionName }
       .flatMap(\.modes)
-    // TODO: Improve!
-      .map { mode in
+      .flatMap { mode in
         try mode.variables
           .map { variable in
             guard let colorMode = ColorMode(rawValue: mode.name) else {
@@ -20,7 +19,6 @@ extension Mapper {
             return try Mapper.toColorToken(variable, colorMode: colorMode)
           }
       }
-      .flatMap { $0 }
 
     let colorValues = try model.collections
       .filter { $0.name == Constants.kColorValueCollectionName }
@@ -34,16 +32,7 @@ extension Mapper {
       .flatMap(\.variables)
       .map(toRadius)
 
-    let spacings = try model.collections
-      .filter { $0.name == Constants.kSpacingCollectionName }
-      .flatMap(\.modes)
-      .first(where: { $0.name == "ios" })?
-      .variables
-      .map(toSpacing)
-
-    guard let spacings else {
-      throw MappingError.noSpacings
-    }
+    let spacings = try toSpacings(model.collections)
 
     return SwiftModel(
       version: version,
@@ -102,6 +91,32 @@ private extension Mapper {
       varName: name.toRadiusVarName(),
       radius: Double(rawRadiusValue)
     )
+  }
+
+  static func toSpacings(_ collections: [CollectionElement]) throws -> [SwiftModel.Spacing] {
+    let collections = collections.filter({ $0.name == Constants.kSpacingCollectionName })
+
+    guard !collections.isEmpty else {
+      throw MappingError.noCollection(Constants.kSpacingCollectionName)
+    }
+
+    let mode = collections
+      .flatMap(\.modes)
+      .first(where: { $0.name == "ios" })
+
+    guard let mode else {
+      throw MappingError.noMode("ios")
+    }
+
+    let spacings = try mode
+      .variables
+      .map(toSpacing)
+
+    guard !spacings.isEmpty else {
+      throw MappingError.noSpacings
+    }
+
+    return spacings
   }
 
   static func toSpacing(_ variable: Variable) throws -> SwiftModel.Spacing {
