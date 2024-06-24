@@ -15,7 +15,8 @@ struct SwiftCommand: ParsableCommand {
   static let configuration = CommandConfiguration(commandName: "swift")
 
   func run() throws {
-    let config = try ConfigLoader.loadConfig(atPath: unwrappedConfigPath)
+    Logger.info("Starting Swift command...")
+    let config = ConfigLoader.loadConfig(atPath: unwrappedConfigPath)
 
     let variablesModel = try decodeVariablesFile(config.sourceDir)
     let swiftModel = try Mapper.toSwiftModel(variablesModel)
@@ -41,7 +42,7 @@ struct SwiftCommand: ParsableCommand {
     try renderedRadiusFile.write(toFile: renderedRadiusFileDest.string, atomically: true, encoding: .utf8)
     try renderedSpacingsFile.write(toFile: renderedSpacingsFileDest.string, atomically: true, encoding: .utf8)
 
-    print("Done!")
+    Logger.info("Done!")
   }
 }
 

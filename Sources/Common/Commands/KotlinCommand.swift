@@ -16,7 +16,7 @@ struct KotlinCommand: ParsableCommand {
 
   func run() throws {
     // Load Config
-    let config = try ConfigLoader.loadConfig(atPath: unwrappedConfigPath)
+    let config = ConfigLoader.loadConfig(atPath: unwrappedConfigPath)
 
     // Decode Variables File
     let variablesModel = try decodeVariablesFile(atPath: config.sourceDir)

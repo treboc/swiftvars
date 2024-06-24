@@ -12,7 +12,8 @@ let package = Package(
     .package(url: "https://github.com/pakLebah/ANSITerminal", from: .init(0, 0, 3)),
     .package(url: "https://github.com/stencilproject/Stencil.git", from: .init(0, 15, 1)),
     .package(url: "https://github.com/lukepistrol/SwiftLintPlugin.git", exact: .init(0, 53, 0)),
-    .package(url: "https://github.com/jpsim/Yams.git", from: "5.0.6")
+    .package(url: "https://github.com/jpsim/Yams.git", from: "5.0.6"),
+    .package(url: "https://github.com/mtynior/ColorizeSwift.git", from: "1.5.0")
   ],
   targets: [
     .executableTarget(
@@ -22,7 +23,8 @@ let package = Package(
         .product(name: "Files", package: "Files"),
         .product(name: "ANSITerminal", package: "ANSITerminal"),
         .product(name: "Stencil", package: "Stencil"),
-        .product(name: "Yams", package: "Yams")
+        .product(name: "Yams", package: "Yams"),
+        .product(name: "ColorizeSwift", package: "ColorizeSwift")
       ],
       resources: [
         .copy("templates")

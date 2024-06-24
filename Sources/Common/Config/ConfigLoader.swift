@@ -2,6 +2,7 @@
 //
 //
 
+import Foundation
 import Files
 import PathKit
 import Yams
@@ -30,14 +31,14 @@ struct Config: Codable {
 }
 
 enum ConfigLoader {
-  static func loadConfig(atPath path: Path) throws -> Config {
+  static func loadConfig(atPath path: Path) -> Config {
     let configPath = path + Constants.configFileName
     let configFile: File
 
     do {
       configFile = try File(path: configPath.string)
     } catch {
-      throw ConfigLoaderError.fileNotFound
+      Logger.fatal(ConfigLoaderError.fileNotFound.description)
     }
 
     do {
@@ -45,7 +46,7 @@ enum ConfigLoader {
       let decoder = YAMLDecoder()
       return try decoder.decode(from: configData)
     } catch {
-      throw ConfigLoaderError.invalidFile
+      Logger.fatal(ConfigLoaderError.invalidFile.description)
     }
   }
 }
