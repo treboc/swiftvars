@@ -8,7 +8,7 @@ extension Mapper {
   static func toKotlinModel(_ model: VariablesModel) throws -> KotlinModel {
     let version = model.version
     let colorTokens = try model.collections
-      .filter { $0.name == Constants.kColorTokenCollectionName }
+      .filter({ $0.name == Constants.kColorTokenCollectionName })
       .flatMap(\.modes)
       .flatMap { mode in
         try mode.variables
@@ -37,7 +37,7 @@ extension Mapper {
     return KotlinModel(
       version: version,
       colorTokens: colorTokens,
-      colorValues: colorValues,
+      rawColors: colorValues,
       radii: radii,
       spacings: spacings
     )
@@ -51,13 +51,10 @@ private extension Mapper {
     var name = variable.name
     let rawColorValue: String?
 
-    switch variable.value {
-    case let .integer(int):
-      throw MappingError.invalidValue(int)
-    case let .string(string):
-      rawColorValue = string
-    case let .value(value):
-      throw MappingError.invalidValue(value.collection)
+    if case let .stringValue(value) = variable.value {
+      rawColorValue = value
+    } else {
+      throw MappingError.invalidValue(variable.value)
     }
 
     guard let rawColorValue else {
@@ -66,7 +63,7 @@ private extension Mapper {
 
     return ColorValue(
       varName: name.toColorTokenColorName(),
-      hexValue: try toKotlinHex(rawColorValue)
+      hexValue: rawColorValue
     )
   }
 
@@ -92,26 +89,23 @@ private extension Mapper {
     var name = variable.name
     let rawRadiusValue: Int?
 
-    switch variable.value {
-    case let .integer(int):
-      rawRadiusValue = int
-    case let .string(string):
-      throw MappingError.invalidValue(string)
-    case let .value(value):
-      throw MappingError.invalidValue(value.collection)
+    if case let .numberValue(value) = variable.value {
+      rawRadiusValue = Int(value)
+    } else {
+      throw MappingError.invalidValue(variable.value)
     }
 
     guard let rawRadiusValue else {
       throw MappingError.noRadiusValue
     }
 
-    return .init(
-      varName: name.toRadiusVarName(),
+    return KotlinModel.Radius(
+      varName: name.toKotlinRadiusVarName(),
       radius: rawRadiusValue
     )
   }
 
-  static func toSpacings(_ collections: [CollectionElement]) throws -> [KotlinModel.Spacing] {
+  static func toSpacings(_ collections: [Collection]) throws -> [KotlinModel.Spacing] {
     let collections = collections.filter({ $0.name == Constants.kSpacingCollectionName })
 
     guard !collections.isEmpty else {
@@ -120,10 +114,10 @@ private extension Mapper {
 
     let mode = collections
       .flatMap(\.modes)
-      .first(where: { $0.name == "android" })
+      .first(where: { $0.name == "Android" })
 
     guard let mode else {
-      throw MappingError.noMode("android")
+      throw MappingError.noMode("Android")
     }
 
     let spacings = try mode
@@ -141,21 +135,18 @@ private extension Mapper {
     var name = variable.name
     let rawRadiusValue: Int?
 
-    switch variable.value {
-    case let .integer(int):
-      rawRadiusValue = int
-    case let .string(string):
-      throw MappingError.invalidValue(string)
-    case let .value(value):
-      throw MappingError.invalidValue(value.collection)
+    if case let .numberValue(value) = variable.value {
+      rawRadiusValue = Int(value)
+    } else {
+      throw MappingError.invalidValue(variable.value)
     }
 
     guard let rawRadiusValue else {
       throw MappingError.noRadiusValue
     }
 
-    return .init(
-      varName: name.toSpacingVarName(),
+    return KotlinModel.Spacing(
+      varName: name.toKotlinSpacingVarName(),
       spacing: rawRadiusValue
     )
   }

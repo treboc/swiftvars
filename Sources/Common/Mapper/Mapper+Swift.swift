@@ -51,13 +51,10 @@ private extension Mapper {
     var name = variable.name
     let rawColorValue: String?
 
-    switch variable.value {
-    case let .integer(int):
-      throw MappingError.invalidValue(int)
-    case let .string(string):
-      rawColorValue = string
-    case let .value(value):
-      throw MappingError.invalidValue(value.collection)
+    if case let .stringValue(value) = variable.value {
+      rawColorValue = value
+    } else {
+      throw MappingError.invalidValue(variable.value)
     }
 
     guard let rawColorValue else {
@@ -66,7 +63,7 @@ private extension Mapper {
 
     return .init(
       varName: name.toColorTokenColorName(),
-      hexValue: rawColorValue
+      hexValue: ""
     )
   }
 
@@ -74,13 +71,10 @@ private extension Mapper {
     var name = variable.name
     let rawRadiusValue: Int?
 
-    switch variable.value {
-    case let .integer(int):
-      rawRadiusValue = int
-    case let .string(string):
-      throw MappingError.invalidValue(string)
-    case let .value(value):
-      throw MappingError.invalidValue(value.collection)
+    if case let .numberValue(value) = variable.value {
+      rawRadiusValue = Int(value)
+    } else {
+      throw MappingError.invalidValue(variable.value)
     }
 
     guard let rawRadiusValue else {
@@ -88,12 +82,12 @@ private extension Mapper {
     }
 
     return .init(
-      varName: name.toRadiusVarName(),
+      varName: name.toSwiftRadiusVarName(),
       radius: Double(rawRadiusValue)
     )
   }
 
-  static func toSpacings(_ collections: [CollectionElement]) throws -> [SwiftModel.Spacing] {
+  static func toSpacings(_ collections: [Collection]) throws -> [SwiftModel.Spacing] {
     let collections = collections.filter({ $0.name == Constants.kSpacingCollectionName })
 
     guard !collections.isEmpty else {
@@ -123,13 +117,10 @@ private extension Mapper {
     var name = variable.name
     let rawRadiusValue: Int?
 
-    switch variable.value {
-    case let .integer(int):
-      rawRadiusValue = int
-    case let .string(string):
-      throw MappingError.invalidValue(string)
-    case let .value(value):
-      throw MappingError.invalidValue(value.collection)
+    if case let .numberValue(value) = variable.value {
+      rawRadiusValue = Int(value)
+    } else {
+      throw MappingError.invalidValue(variable.value)
     }
 
     guard let rawRadiusValue else {
@@ -137,7 +128,7 @@ private extension Mapper {
     }
 
     return .init(
-      varName: name.toSpacingVarName(),
+      varName: name.toSwiftSpacingVarName(),
       spacing: Double(rawRadiusValue)
     )
   }

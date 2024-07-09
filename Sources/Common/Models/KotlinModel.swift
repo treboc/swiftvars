@@ -7,7 +7,7 @@ import Foundation
 struct KotlinModel {
   let version: String
   let colorTokens: [ColorToken]
-  let colorValues: [ColorValue]
+  let rawColors: [ColorValue]
   let radii: [Radius]
   let spacings: [Spacing]
 

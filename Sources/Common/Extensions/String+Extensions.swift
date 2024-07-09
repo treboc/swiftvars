@@ -14,7 +14,7 @@ extension String {
 
     parts.insert(colorMode.rawValue, at: 0)
 
-    return parts.toLowerCamelCase()
+    return parts.toCamelCase()
   }
 
   mutating func toColorTokenColorName() -> String {
@@ -27,19 +27,29 @@ extension String {
     return replacingOccurrences(of: "-", with: "/")
       .split(separator: "/")
       .map(String.init)
-      .toLowerCamelCase()
+      .toCamelCase()
   }
 
   // MARK: - Radius
 
-  mutating func toRadiusVarName() -> String {
+  mutating func toSwiftRadiusVarName() -> String {
     replacingOccurrences(of: "-", with: "")
+  }
+
+  mutating func toKotlinRadiusVarName() -> String {
+    replacingOccurrences(of: "-", with: "")
+      .capitalizeFirst
   }
 
   // MARK: - Spacing
 
-  mutating func toSpacingVarName() -> String {
+  mutating func toSwiftSpacingVarName() -> String {
     replacingOccurrences(of: "-", with: "")
+  }
+
+  mutating func toKotlinSpacingVarName() -> String {
+    replacingOccurrences(of: "-", with: "")
+      .capitalizeFirst
   }
 }
 

@@ -22,5 +22,11 @@ identifier_name:
     - id
     - lhs
     - rhs
+    - r
+    - g
+    - b
+    - a
+    - x
+    - y
 
 reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, junit, html, emoji, sonarqube, markdown)

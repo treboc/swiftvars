@@ -28,6 +28,7 @@ enum ConfigLoaderError: Error {
 struct Config: Codable {
   let sourceDir: String
   let destinationDir: String
+  let packageName: String?
 }
 
 enum ConfigLoader {

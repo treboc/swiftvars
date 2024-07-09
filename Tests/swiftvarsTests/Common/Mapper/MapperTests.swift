@@ -20,8 +20,8 @@ final class MapperTests: XCTestCase {
   }
 
   func test_toColorToken_withValuePrimitivesCollection() {
-    let value = Variable.Value(collection: .primitives, name: "blue")
-    let variable = Variable(name: "SecondaryColor", value: .value(value))
+    let value = Variable.ColorTokenValue(collection: .primitives, name: "blue")
+    let variable = Variable(name: "SecondaryColor", value: .colorTokenValue(value))
     let colorMode = ColorMode.dark
 
     do {
@@ -43,8 +43,8 @@ final class MapperTests: XCTestCase {
   }
 
   func test_toColorToken_withValueNonPrimitivesCollection() {
-    let value = Variable.Value(collection: .colorToken, name: "blue")
-    let variable = Variable(name: "secondaryColor", value: .value(value))
+    let value = Variable.ColorTokenValue(collection: .colorToken, name: "blue")
+    let variable = Variable(name: "secondaryColor", value: .colorTokenValue(value))
     let colorMode = ColorMode.dark
 
     XCTAssertThrowsError(try Mapper.toColorToken(variable, colorMode: colorMode)) { error in

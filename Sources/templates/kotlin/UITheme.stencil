@@ -7,9 +7,15 @@ package {{ packageName }}
 
 object UITheme {
     object Color {
-        object RawColors {
+        object Colors {
             {% for color in colors %}
-            val {{ color.varName }} = Color({{ color.hexValue }})
+            val {{ color.varName }} = RawColors.{{ color.colorName }}
+            {% endfor %}
+        }
+
+        object RawColors {
+            {% for rawColor in rawColors %}
+            val {{ rawColor.varName }} = Color({{ rawColor.hexValue }})
             {% endfor %}
         }
     }

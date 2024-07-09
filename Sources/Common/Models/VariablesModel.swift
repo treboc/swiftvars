@@ -8,12 +8,12 @@ import Foundation
 
 struct VariablesModel: Codable {
   let version: String
-  let collections: [CollectionElement]
+  let collections: [Collection]
 }
 
-// MARK: - CollectionElement
+// MARK: - Collection
 
-struct CollectionElement: Codable {
+struct Collection: Codable {
   let name: String
   let modes: [Mode]
 }
@@ -29,54 +29,143 @@ struct Mode: Codable {
 
 struct Variable: Codable {
   let name: String
-  let value: ValueUnion
+  let value: Value
 
-  enum ValueUnion: Codable {
-    case integer(Int)
-    case string(String)
-    case value(Value)
+  enum Value: Codable {
+    case stringValue(String)
+    case numberValue(Int)
+    case objectValue(ValueObject)
 
     init(from decoder: Decoder) throws {
       let container = try decoder.singleValueContainer()
-      if let value = try? container.decode(Int.self) {
-        self = .integer(value)
-        return
-      }
-      if let value = try? container.decode(String.self) {
-        self = .string(value)
-        return
-      }
-      if let value = try? container.decode(Value.self) {
-        self = .value(value)
-        return
-      }
-      throw DecodingError.typeMismatch(
-        ValueUnion.self,
-        DecodingError.Context(
-          codingPath: decoder.codingPath,
-          debugDescription: "Wrong type for ValueUnion"
+      if let stringValue = try? container.decode(String.self) {
+        self = .stringValue(stringValue)
+      } else if let numberValue = try? container.decode(Int.self) {
+        self = .numberValue(numberValue)
+      } else if let objectValue = try? container.decode(ValueObject.self) {
+        self = .objectValue(objectValue)
+      } else {
+        throw DecodingError.typeMismatch(
+          ValueObject.self,
+          DecodingError.Context(
+            codingPath: decoder.codingPath,
+            debugDescription: "Wrong type for VariableValue"
+          )
         )
-      )
+      }
     }
 
     func encode(to encoder: Encoder) throws {
       var container = encoder.singleValueContainer()
       switch self {
-      case let .integer(value):
-        try container.encode(value)
-      case let .string(value):
-        try container.encode(value)
-      case let .value(value):
-        try container.encode(value)
+      case .stringValue(let stringValue):
+        try container.encode(stringValue)
+      case .numberValue(let numberValue):
+        try container.encode(numberValue)
+      case .objectValue(let objectValue):
+        try container.encode(objectValue)
       }
     }
   }
 
-  // MARK: - Value
-
-  struct Value: Codable {
+  struct ColorTokenValue: Codable {
     let collection: CollectionEnum
     let name: String
+  }
+
+  struct ValueObject: Codable {
+    let collection: CollectionEnum?
+    let name: String?
+    let fontSize: Int?
+    let fontFamily: String?
+    let fontWeight: String?
+    let lineHeight: LineHeight?
+    let lineHeightUnit: String?
+    let letterSpacing: Int?
+    let letterSpacingUnit: String?
+    let textCase: String?
+    let textDecoration: String?
+    let effects: [Effect]?
+    let layoutGrids: [LayoutGrid]?
+    let color: RGBA?
+    let offset: Offset?
+    let radius: Int?
+    let spread: Int?
+  }
+
+  // MARK: - EffectValue
+  struct EffectValue: Codable {
+    let effects: [Effect]
+  }
+
+  // MARK: - Effect
+  struct Effect: Codable {
+    let type: String
+    let color: RGBA
+    let offset: Offset
+    let radius: Int
+    let spread: Int
+  }
+
+  // MARK: - RGBA
+  struct RGBA: Codable {
+    let r: Int
+    let g: Int
+    let b: Int
+    let a: Double
+  }
+
+  // MARK: - Offset
+  struct Offset: Codable {
+    let x: Int
+    let y: Int
+  }
+
+  // MARK: - GridValue
+  struct GridValue: Codable {
+    let layoutGrids: [LayoutGrid]
+  }
+
+  // MARK: - LayoutGrid
+  struct LayoutGrid: Codable {
+    let pattern: String
+    let color: RGBA
+    let alignment: String
+    let gutterSize: Int
+    let offset: Int
+    let count: Int
+  }
+
+  enum LineHeight: Codable {
+    case double(Double)
+    case string(String)
+
+    init(from decoder: Decoder) throws {
+      let container = try decoder.singleValueContainer()
+      if let doubleValue = try? container.decode(Double.self) {
+        self = .double(doubleValue)
+      } else if let stringValue = try? container.decode(String.self) {
+        self = .string(stringValue)
+      } else {
+        throw DecodingError.typeMismatch(
+          LineHeight.self,
+          DecodingError.Context(
+            codingPath: decoder.codingPath,
+            debugDescription: "LineHeight value cannot be decoded"
+          )
+        )
+      }
+    }
+
+    func encode(to encoder: Encoder) throws {
+      var container = encoder.singleValueContainer()
+      switch self {
+      case .double(let doubleValue):
+        try container.encode(doubleValue)
+      case .string(let stringValue):
+        try container.encode(stringValue)
+      }
+    }
   }
 
   enum CollectionEnum: String, Codable {

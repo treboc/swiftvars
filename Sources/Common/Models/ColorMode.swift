@@ -5,6 +5,6 @@
 import Foundation
 
 enum ColorMode: String {
-  case light
-  case dark
+  case light = "Light"
+  case dark = "Dark"
 }

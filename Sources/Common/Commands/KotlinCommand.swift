@@ -18,11 +18,15 @@ struct KotlinCommand: ParsableCommand {
     // Load Config
     let config = ConfigLoader.loadConfig(atPath: unwrappedConfigPath)
 
+    guard let packageName = config.packageName else {
+      Logger.fatal("Cannot find a package name in the config file.")
+    }
+
     // Decode Variables File
     let variablesModel = try decodeVariablesFile(atPath: config.sourceDir)
     let kotlinModel = try Mapper.toKotlinModel(variablesModel)
 
-    let renderedThemeFile = try renderThemeFile(model: kotlinModel)
+    let renderedThemeFile = try renderThemeFile(model: kotlinModel, packageName: packageName)
     let renderedThemeFileDest = Path(components: [config.destinationDir, SwiftVarTemplate.kotlinThemeFile.outputFileName])
     try renderedThemeFile.write(toFile: renderedThemeFileDest.string, atomically: true, encoding: .utf8)
 
@@ -48,12 +52,12 @@ private extension KotlinCommand {
     return model
   }
 
-  func renderThemeFile(model: KotlinModel) throws -> String {
+  func renderThemeFile(model: KotlinModel, packageName: String) throws -> String {
     let context: [String: Any] = [
-      // TODO: Add package name as option
-      "packageName": "INSERT PACKAGE NAME HERE!",
+      "packageName": packageName,
       "version": model.version,
-      "colors": model.colorValues,
+      "colors": model.colorTokens,
+      "rawColors": model.rawColors,
       "radii": model.radii,
       "spacings": model.spacings
     ]

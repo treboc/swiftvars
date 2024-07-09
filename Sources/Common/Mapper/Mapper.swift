@@ -11,17 +11,16 @@ extension Mapper {
     var name = variable.name
     let rawColorName: String?
 
-    switch variable.value {
-    case let .integer(int):
-      throw MappingError.invalidValue(int)
-    case let .string(string):
-      rawColorName = string
-    case let .value(value):
-      guard case value.collection = .primitives else {
+    if case let .stringValue(value) = variable.value {
+      rawColorName = value
+    } else if case let .objectValue(value) = variable.value {
+      guard let collection = value.collection, value.collection == .primitives else {
         throw MappingError.invalidCollection(value.collection)
       }
 
       rawColorName = value.name
+    } else {
+      throw MappingError.invalidValue(variable.value)
     }
 
     guard var rawColorName, !rawColorName.isEmpty else {

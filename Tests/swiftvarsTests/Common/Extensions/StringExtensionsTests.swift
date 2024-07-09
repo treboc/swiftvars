@@ -29,21 +29,21 @@ final class StringExtensionsTests: XCTestCase {
 
   func test_toRadiusVarName() {
     var input = "radius-small"
-    let result = input.toRadiusVarName()
+    let result = input.toSwiftRadiusVarName()
     XCTAssertEqual(result, "radiussmall")
 
     var input2 = "radius-large"
-    let result2 = input2.toRadiusVarName()
+    let result2 = input2.toSwiftRadiusVarName()
     XCTAssertEqual(result2, "radiuslarge")
   }
 
   func test_toSpacingVarName() {
     var input = "spacing-small"
-    let result = input.toSpacingVarName()
+    let result = input.toSwiftSpacingVarName()
     XCTAssertEqual(result, "spacingsmall")
 
     var input2 = "spacing-large"
-    let result2 = input2.toSpacingVarName()
+    let result2 = input2.toSwiftSpacingVarName()
     XCTAssertEqual(result2, "spacinglarge")
   }
 
