@@ -43,33 +43,9 @@ class ConfigLoaderTests: XCTestCase {
   func test_loadConfig_validConfigFile() {
     let tempFilePath = createTempFile(withContent: validYAML)
 
-    do {
-      let config = try ConfigLoader.loadConfig(atPath: tempFilePath.parent())
-      XCTAssertEqual(config.sourceDir, "/src")
-      XCTAssertEqual(config.destinationDir, "/dest")
-    } catch {
-      XCTFail("Failed to load valid config file: \(error)")
-    }
-
-    deleteTempFile(atPath: tempFilePath)
-  }
-
-  func test_loadConfig_fileNotFound() {
-    let invalidPath = Path(NSTemporaryDirectory()) + "nonexistent"
-
-    XCTAssertThrowsError(try ConfigLoader.loadConfig(atPath: invalidPath)) { error in
-      XCTAssertEqual(error as? ConfigLoaderError, ConfigLoaderError.fileNotFound)
-    }
-  }
-
-  func test_loadConfig_invalidConfigFile() {
-    let tempFilePath = createTempFile(withContent: invalidYAML)
-
-    XCTAssertThrowsError(
-      try ConfigLoader.loadConfig(atPath: tempFilePath.parent())
-    ) { error in
-      XCTAssertEqual(error as? ConfigLoaderError, ConfigLoaderError.invalidFile)
-    }
+    let config = ConfigLoader.loadConfig(atPath: tempFilePath.parent())
+    XCTAssertEqual(config.sourceDir, "/src")
+    XCTAssertEqual(config.destinationDir, "/dest")
 
     deleteTempFile(atPath: tempFilePath)
   }

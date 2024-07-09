@@ -91,6 +91,44 @@ struct Variable: Codable {
     let offset: Offset?
     let radius: Int?
     let spread: Int?
+
+    init(
+      collection: CollectionEnum? = nil,
+      name: String? = nil,
+      fontSize: Int? = nil,
+      fontFamily: String? = nil,
+      fontWeight: String? = nil,
+      lineHeight: LineHeight? = nil,
+      lineHeightUnit: String? = nil,
+      letterSpacing: Int? = nil,
+      letterSpacingUnit: String? = nil,
+      textCase: String? = nil,
+      textDecoration: String? = nil,
+      effects: [Effect]? = nil,
+      layoutGrids: [LayoutGrid]? = nil,
+      color: RGBA? = nil,
+      offset: Offset? = nil,
+      radius: Int? = nil,
+      spread: Int? = nil
+    ) {
+      self.collection = collection
+      self.name = name
+      self.fontSize = fontSize
+      self.fontFamily = fontFamily
+      self.fontWeight = fontWeight
+      self.lineHeight = lineHeight
+      self.lineHeightUnit = lineHeightUnit
+      self.letterSpacing = letterSpacing
+      self.letterSpacingUnit = letterSpacingUnit
+      self.textCase = textCase
+      self.textDecoration = textDecoration
+      self.effects = effects
+      self.layoutGrids = layoutGrids
+      self.color = color
+      self.offset = offset
+      self.radius = radius
+      self.spread = spread
+    }
   }
 
   // MARK: - EffectValue

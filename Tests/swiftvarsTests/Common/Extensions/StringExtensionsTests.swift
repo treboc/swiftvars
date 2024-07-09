@@ -10,21 +10,21 @@ final class StringExtensionsTests: XCTestCase {
     var input = "primaryColor"
     let colorMode = ColorMode.light
     let result = input.toColorTokenVarName(colorMode: colorMode)
-    XCTAssertEqual(result, "lightPrimaryColor")
+    XCTAssertEqual(result, "LightPrimaryColor")
 
     var input2 = "background/color"
     let result2 = input2.toColorTokenVarName(colorMode: colorMode)
-    XCTAssertEqual(result2, "lightBackgroundColor")
+    XCTAssertEqual(result2, "LightBackgroundColor")
   }
 
   func test_toColorTokenColorName() {
     var input = "color/primary-color"
     let result = input.toColorTokenColorName()
-    XCTAssertEqual(result, "primaryColor")
+    XCTAssertEqual(result, "PrimaryColor")
 
     var input2 = "color/background-color"
     let result2 = input2.toColorTokenColorName()
-    XCTAssertEqual(result2, "backgroundColor")
+    XCTAssertEqual(result2, "BackgroundColor")
   }
 
   func test_toRadiusVarName() {

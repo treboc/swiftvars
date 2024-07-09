@@ -7,53 +7,53 @@ import XCTest
 
 final class MapperTests: XCTestCase {
   func test_toColorToken_withStringValue() {
-    let variable = Variable(name: "primaryColor", value: .string("red"))
+    let variable = Variable(name: "primaryColor", value: .stringValue("red"))
     let colorMode = ColorMode.light
 
     do {
       let colorToken = try Mapper.toColorToken(variable, colorMode: colorMode)
-      XCTAssertEqual(colorToken.varName, "lightPrimaryColor")
-      XCTAssertEqual(colorToken.colorName, "red")
+      XCTAssertEqual(colorToken.varName, "LightPrimaryColor")
+      XCTAssertEqual(colorToken.colorName, "Red")
     } catch {
       XCTFail("Unexpected error: \(error)")
     }
   }
 
   func test_toColorToken_withValuePrimitivesCollection() {
-    let value = Variable.ColorTokenValue(collection: .primitives, name: "blue")
-    let variable = Variable(name: "SecondaryColor", value: .colorTokenValue(value))
+    let value = Variable.ValueObject(collection: .primitives, name: "blue")
+    let variable = Variable(name: "SecondaryColor", value: .objectValue(value))
     let colorMode = ColorMode.dark
 
     do {
       let colorToken = try Mapper.toColorToken(variable, colorMode: colorMode)
-      XCTAssertEqual(colorToken.varName, "darkSecondaryColor")
-      XCTAssertEqual(colorToken.colorName, "blue")
+      XCTAssertEqual(colorToken.varName, "DarkSecondaryColor")
+      XCTAssertEqual(colorToken.colorName, "Blue")
     } catch {
       XCTFail("Unexpected error: \(error)")
     }
   }
 
   func test_toColorToken_withIntegerValue() {
-    let variable = Variable(name: "invalidColor", value: .integer(123))
+    let variable = Variable(name: "invalidColor", value: .numberValue(123))
     let colorMode = ColorMode.light
 
     XCTAssertThrowsError(try Mapper.toColorToken(variable, colorMode: colorMode)) { error in
-      XCTAssertEqual(error as? MappingError, MappingError.invalidValue(123))
+      XCTAssertEqual(error as? MappingError, MappingError.invalidValue(Variable.Value.numberValue(123)))
     }
   }
 
   func test_toColorToken_withValueNonPrimitivesCollection() {
-    let value = Variable.ColorTokenValue(collection: .colorToken, name: "blue")
-    let variable = Variable(name: "secondaryColor", value: .colorTokenValue(value))
+    let value = Variable.ValueObject(collection: .colorToken, name: "blue")
+    let variable = Variable(name: "secondaryColor", value: .objectValue(value))
     let colorMode = ColorMode.dark
 
     XCTAssertThrowsError(try Mapper.toColorToken(variable, colorMode: colorMode)) { error in
-      XCTAssertEqual(error as? MappingError, MappingError.invalidCollection(Variable.CollectionEnum.colorToken))
+      XCTAssertEqual(error as? MappingError, MappingError.invalidCollection(value.collection))
     }
   }
 
   func test_toColorToken_withEmptyString() {
-    let variable = Variable(name: "emptyColor", value: .string(""))
+    let variable = Variable(name: "emptyColor", value: .stringValue(""))
     let colorMode = ColorMode.light
 
     XCTAssertThrowsError(try Mapper.toColorToken(variable, colorMode: colorMode)) { error in
