@@ -1,0 +1,32 @@
+included:
+  - Sources
+  - Tests
+
+line_length: 140
+
+type_body_length:
+  - 300 # warning
+  - 400 # error
+
+file_length:
+  warning: 500
+  error: 1200
+
+type_name:
+  min_length: 3 # only warning
+
+identifier_name:
+  min_length: # only min_length
+    error: 3 # only error
+  excluded: # excluded via string array
+    - id
+    - lhs
+    - rhs
+    - r
+    - g
+    - b
+    - a
+    - x
+    - y
+
+reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, junit, html, emoji, sonarqube, markdown)
