@@ -82,6 +82,25 @@ extension Mapper {
   }
 }
 
+// MARK: - RawColor
+
+extension Mapper {
+  func colorValueName(from input: String) -> String {
+    let parts = input
+      .replacingOccurrences(of: "color/", with: "")
+      .replacingOccurrences(of: "-", with: "/")
+      .split(separator: "/")
+      .map(String.init)
+
+    return switch platform.defaultCaseStyle {
+    case .lowerCamelCase:
+      parts.toLowerCamelCase()
+    case .upperCamelCase:
+      parts.toUpperCamelCase()
+    }
+  }
+}
+
 // MARK: - Radius
 
 extension Mapper {

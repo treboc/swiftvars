@@ -101,7 +101,7 @@ private extension Mapper {
     }
 
     return ColorValue(
-      varName: colorTokenVariableName(from: variable.name),
+      varName: colorValueName(from: variable.name),
       hexValue: rawColorValue
     )
   }
