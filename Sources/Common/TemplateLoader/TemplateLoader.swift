@@ -5,12 +5,22 @@
 import PathKit
 import Stencil
 
+class StringLoader: Loader {
+  func loadTemplate(name: String, environment: Environment) throws -> Template {
+    if name == SwiftVarTemplate.kotlinThemeFile.templateFileName {
+      return Template(templateString: SwiftVarTemplate.kotlinThemeFile.templateString)
+    }
+
+    throw TemplateDoesNotExist(templateNames: [name], loader: self)
+  }
+}
+
 extension Template {
-  static let environment = Environment(loader: FileSystemLoader(paths: [.templatesPath]), trimBehaviour: .smart)
+  static var environment = Environment(loader: StringLoader())
 
   static func loadTemplate(_ template: SwiftVarTemplate, platform: Platform) throws -> Template {
-    let path = Path(components: [platform.folderName, template.templateFileName])
-    return try environment.loadTemplate(name: path.string)
+    environment.trimBehaviour = .all
+    return try environment.loadTemplate(name: template.templateFileName)
   }
 
   static func renderTemplate(_ template: SwiftVarTemplate, platform: Platform, context: [String: Any] = [:]) throws -> String {
