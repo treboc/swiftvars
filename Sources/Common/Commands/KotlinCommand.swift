@@ -56,7 +56,8 @@ private extension KotlinCommand {
     let context: [String: Any] = [
       "packageName": packageName,
       "version": model.version,
-      "colors": model.colorTokens,
+      "lightColorToken": model.colorTokens.filter({ $0.colorMode == .light }),
+      "darkColorToken": model.colorTokens.filter({ $0.colorMode == .dark }),
       "rawColors": model.rawColors,
       "radii": model.radii,
       "spacings": model.spacings

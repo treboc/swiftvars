@@ -8,9 +8,21 @@ package {{ packageName }}
 object UITheme {
     object Color {
         object Colors {
-            {% for color in colors %}
-            val {{ color.varName }} = RawColors.{{ color.colorName }}
-            {% endfor %}
+            {% if darkColorToken.count > 0 %}
+            object DarkMode {
+                {% for colorToken in darkColorToken %}
+                val {{ colorToken.varName }} = RawColors.{{ colorToken.colorName }}
+                {% endfor %}
+            }
+            {% endif %}
+
+            {% if lightColorToken.count > 0 %}
+            object LightMode {
+                {% for colorToken in lightColorToken %}
+                val {{ colorToken.varName }} = RawColors.{{ colorToken.colorName }}
+                {% endfor %}
+            }
+            {% endif %}
         }
 
         object RawColors {
