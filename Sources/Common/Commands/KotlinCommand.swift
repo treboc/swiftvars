@@ -22,9 +22,9 @@ struct KotlinCommand: ParsableCommand {
       Logger.fatal("Cannot find a package name in the config file.")
     }
 
-    // Decode Variables File
+    let mapper = Mapper(platform: .kotlin)
     let variablesModel = try decodeVariablesFile(atPath: config.sourceDir)
-    let kotlinModel = try Mapper.toKotlinModel(variablesModel)
+    let kotlinModel = try mapper.toKotlinModel(variablesModel)
 
     let renderedThemeFile = try renderThemeFile(model: kotlinModel, packageName: packageName)
     let renderedThemeFileDest = Path(components: [config.destinationDir, SwiftVarTemplate.kotlinThemeFile.outputFileName])

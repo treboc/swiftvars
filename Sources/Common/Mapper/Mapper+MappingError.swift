@@ -7,7 +7,7 @@ import Foundation
 enum MappingError: Error {
   case invalidValue(Codable)
   case invalidCollection(Codable)
-  case noCollection(String)
+  case missingCollection(String)
   case noMode(String)
   case noColorName
   case noColorModeName(String)
@@ -22,7 +22,7 @@ enum MappingError: Error {
     case let .invalidCollection(collection):
       "Invalid collection: \(collection)"
 
-    case let .noCollection(name):
+    case let .missingCollection(name):
       "No collection found with name: \(name)"
 
     case let .noMode(name):
@@ -47,10 +47,10 @@ extension MappingError: Equatable {
   static func == (lhs: MappingError, rhs: MappingError) -> Bool {
     switch (lhs, rhs) {
     case let (.invalidValue(lhsValue), .invalidValue(rhsValue)):
-      "\(lhsValue)" == "\(rhsValue)" // Simplified comparison
+      "\(lhsValue)" == "\(rhsValue)"
 
     case let (.invalidCollection(lhsCollection), .invalidCollection(rhsCollection)):
-      "\(lhsCollection)" == "\(rhsCollection)" // Simplified comparison
+      "\(lhsCollection)" == "\(rhsCollection)"
 
     case (.noColorName, .noColorName):
       true

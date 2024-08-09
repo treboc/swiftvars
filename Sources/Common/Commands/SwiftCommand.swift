@@ -18,8 +18,10 @@ struct SwiftCommand: ParsableCommand {
     Logger.info("Starting Swift command...")
     let config = ConfigLoader.loadConfig(atPath: unwrappedConfigPath)
 
+    let mapper = Mapper(platform: .swift)
+
     let variablesModel = try decodeVariablesFile(config.sourceDir)
-    let swiftModel = try Mapper.toSwiftModel(variablesModel)
+    let swiftModel = try mapper.toSwiftModel(variablesModel)
 
     let renderedBaseFile = try renderBaseFile(model: swiftModel)
     let renderedBaseFileDest = Path(components: [config.destinationDir, SwiftVarTemplate.swiftBaseFile.outputFileName])

@@ -11,4 +11,13 @@ enum Platform: String {
   var folderName: String {
     rawValue
   }
+
+  var defaultCaseStyle: CaseStyle {
+    switch self {
+    case .swift:
+      return .lowerCamelCase
+    case .kotlin:
+      return .upperCamelCase
+    }
+  }
 }

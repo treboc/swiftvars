@@ -6,54 +6,13 @@ import XCTest
 @testable import swiftvars
 
 final class StringExtensionsTests: XCTestCase {
-  func test_toColorTokenVarName() {
-    var input = "primaryColor"
-    let colorMode = ColorMode.light
-    let result = input.toColorTokenVarName(colorMode: colorMode)
-    XCTAssertEqual(result, "LightPrimaryColor")
-
-    var input2 = "background/color"
-    let result2 = input2.toColorTokenVarName(colorMode: colorMode)
-    XCTAssertEqual(result2, "LightBackgroundColor")
-  }
-
-  func test_toColorTokenColorName() {
-    var input = "color/primary-color"
-    let result = input.toColorTokenColorName()
-    XCTAssertEqual(result, "PrimaryColor")
-
-    var input2 = "color/background-color"
-    let result2 = input2.toColorTokenColorName()
-    XCTAssertEqual(result2, "BackgroundColor")
-  }
-
-  func test_toRadiusVarName() {
-    var input = "radius-small"
-    let result = input.toSwiftRadiusVarName()
-    XCTAssertEqual(result, "radiussmall")
-
-    var input2 = "radius-large"
-    let result2 = input2.toSwiftRadiusVarName()
-    XCTAssertEqual(result2, "radiuslarge")
-  }
-
-  func test_toSpacingVarName() {
-    var input = "spacing-small"
-    let result = input.toSwiftSpacingVarName()
-    XCTAssertEqual(result, "spacingsmall")
-
-    var input2 = "spacing-large"
-    let result2 = input2.toSwiftSpacingVarName()
-    XCTAssertEqual(result2, "spacinglarge")
-  }
-
-  func test_toCamelCase() {
+  func test_toUpperCamelCasee() {
     let input = ["hello", "world"]
-    let result = input.toCamelCase()
+    let result = input.toUpperCamelCase()
     XCTAssertEqual(result, "HelloWorld")
 
     let input2 = ["swift", "rocks"]
-    let result2 = input2.toCamelCase()
+    let result2 = input2.toUpperCamelCase()
     XCTAssertEqual(result2, "SwiftRocks")
   }
 

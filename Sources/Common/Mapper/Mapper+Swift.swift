@@ -5,7 +5,7 @@
 import Foundation
 
 extension Mapper {
-  static func toSwiftModel(_ model: VariablesModel) throws -> SwiftModel {
+  func toSwiftModel(_ model: VariablesModel) throws -> SwiftModel {
     let version = model.version
     let colorTokens = try model.collections
       .filter { $0.name == Constants.kColorTokenCollectionName }
@@ -16,7 +16,7 @@ extension Mapper {
             guard let colorMode = ColorMode(rawValue: mode.name) else {
               throw MappingError.noColorModeName(mode.name)
             }
-            return try Mapper.toColorToken(variable, colorMode: colorMode)
+            return try toColorToken(variable, colorMode: colorMode)
           }
       }
 
@@ -47,8 +47,7 @@ extension Mapper {
 // MARK: - Private
 
 private extension Mapper {
-  static func toColorValue(_ variable: Variable) throws -> ColorValue {
-    var name = variable.name
+  func toColorValue(_ variable: Variable) throws -> ColorValue {
     let rawColorValue: String?
 
     if case let .stringValue(value) = variable.value {
@@ -57,18 +56,18 @@ private extension Mapper {
       throw MappingError.invalidValue(variable.value)
     }
 
-    guard let rawColorValue else {
+    guard rawColorValue != nil else {
       throw MappingError.noColorName
     }
 
+    #warning("TODO: implement colorValue")
     return .init(
-      varName: name.toColorTokenColorName(),
+      varName: colorTokenColorName(from: variable.name),
       hexValue: ""
     )
   }
 
-  static func toRadius(_ variable: Variable) throws -> SwiftModel.Radius {
-    var name = variable.name
+  func toRadius(_ variable: Variable) throws -> SwiftModel.Radius {
     let rawRadiusValue: Int?
 
     if case let .numberValue(value) = variable.value {
@@ -82,16 +81,16 @@ private extension Mapper {
     }
 
     return .init(
-      varName: name.toSwiftRadiusVarName(),
+      varName: radiusVariableName(from: variable.name),
       radius: Double(rawRadiusValue)
     )
   }
 
-  static func toSpacings(_ collections: [Collection]) throws -> [SwiftModel.Spacing] {
+  func toSpacings(_ collections: [Collection]) throws -> [SwiftModel.Spacing] {
     let collections = collections.filter({ $0.name == Constants.kSpacingCollectionName })
 
     guard !collections.isEmpty else {
-      throw MappingError.noCollection(Constants.kSpacingCollectionName)
+      throw MappingError.missingCollection(Constants.kSpacingCollectionName)
     }
 
     let mode = collections
@@ -113,8 +112,7 @@ private extension Mapper {
     return spacings
   }
 
-  static func toSpacing(_ variable: Variable) throws -> SwiftModel.Spacing {
-    var name = variable.name
+  func toSpacing(_ variable: Variable) throws -> SwiftModel.Spacing {
     let rawRadiusValue: Int?
 
     if case let .numberValue(value) = variable.value {
@@ -128,7 +126,7 @@ private extension Mapper {
     }
 
     return .init(
-      varName: name.toSwiftSpacingVarName(),
+      varName: spacingVariableName(from: variable.name),
       spacing: Double(rawRadiusValue)
     )
   }
