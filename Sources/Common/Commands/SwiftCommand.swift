@@ -71,7 +71,7 @@ private extension SwiftCommand {
       "version": model.version
     ]
 
-    return try Template.renderTemplate(.swiftBaseFile, platform: .swift, context: context)
+    return try Template.renderTemplate(.swiftBaseFile, context: context)
   }
 
   func renderColorFile(model: SwiftModel) throws -> String {
@@ -80,7 +80,7 @@ private extension SwiftCommand {
       "colors": model.colorTokens
     ]
 
-    return try Template.renderTemplate(.swiftColorsFile, platform: .swift, context: context)
+    return try Template.renderTemplate(.swiftColorsFile, context: context)
   }
 
   func renderColorValuesFile(model: SwiftModel) throws -> String {
@@ -89,7 +89,7 @@ private extension SwiftCommand {
       "colors": model.colorValues
     ]
 
-    return try Template.renderTemplate(.swiftColorValuesFile, platform: .swift, context: context)
+    return try Template.renderTemplate(.swiftColorValuesFile, context: context)
   }
 
   func renderRadiusFile(model: SwiftModel) throws -> String {
@@ -98,7 +98,7 @@ private extension SwiftCommand {
       "radii": model.radii
     ]
 
-    return try Template.renderTemplate(.swiftRadiusFile, platform: .swift, context: context)
+    return try Template.renderTemplate(.swiftRadiusFile, context: context)
   }
 
   func renderSpacingsFile(model: SwiftModel) throws -> String {
@@ -107,6 +107,6 @@ private extension SwiftCommand {
       "spacings": model.spacings
     ]
 
-    return try Template.renderTemplate(.swiftSpacingFile, platform: .swift, context: context)
+    return try Template.renderTemplate(.swiftSpacingFile, context: context)
   }
 }

@@ -7,17 +7,13 @@ import Foundation
 private let kKotlinFileExtension = ".kt"
 private let kSwiftFileExtension = ".swift"
 
-enum SwiftVarTemplate {
+enum SwiftVarTemplate: String {
   case kotlinThemeFile
   case swiftBaseFile
   case swiftColorsFile
   case swiftColorValuesFile
   case swiftRadiusFile
   case swiftSpacingFile
-
-  var templateFileName: String {
-    filename
-  }
 
   var outputFileName: String {
     switch self {

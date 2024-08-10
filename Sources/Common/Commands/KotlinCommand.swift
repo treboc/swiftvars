@@ -63,6 +63,6 @@ private extension KotlinCommand {
       "spacings": model.spacings
     ]
 
-    return try Template.renderTemplate(.kotlinThemeFile, platform: .kotlin, context: context)
+    return try Template.renderTemplate(.kotlinThemeFile, context: context)
   }
 }
