@@ -85,7 +85,7 @@ extension Mapper {
 // MARK: - RawColor
 
 extension Mapper {
-  func colorValueName(from input: String) -> String {
+  func colorValueVariableName(from input: String) -> String {
     let parts = input
       .replacingOccurrences(of: "color/", with: "")
       .replacingOccurrences(of: "-", with: "/")

@@ -7,7 +7,6 @@ import Foundation
 extension Mapper {
   func toKotlinModel(_ model: VariablesModel) throws -> KotlinModel {
     let version = model.version
-
     let colorTokens = try colorTokens(from: model)
     let colorValues = try colorValues(from: model)
     let radii = try radii(from: model)
@@ -95,19 +94,23 @@ private extension Mapper {
       throw MappingError.invalidValue(variable.value)
     }
 
-    #warning("TODO: implement correct error message here")
     guard let rawColorValue else {
       throw MappingError.noColorName
     }
 
     return ColorValue(
-      varName: colorValueName(from: variable.name),
-      hexValue: rawColorValue
+      varName: colorValueVariableName(from: variable.name),
+      hexValue: toHex(rawColorValue)
     )
   }
 
-  func toHex(_ string: String) throws -> String {
-    try Validator.validateHexColor(string)
+  func toHex(_ string: String) -> String {
+    do {
+      try Validator.validateHexColor(string)
+    } catch {
+      Logger.fatal("Failed to validate hex color: \(string)")
+    }
+
     let string = string.replacingOccurrences(of: "#", with: "").uppercased()
 
     if string.count == 3 {

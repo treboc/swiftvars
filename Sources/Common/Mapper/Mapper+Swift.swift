@@ -56,14 +56,19 @@ private extension Mapper {
       throw MappingError.invalidValue(variable.value)
     }
 
-    guard rawColorValue != nil else {
+    guard let rawColorValue else {
       throw MappingError.noColorName
     }
 
-    #warning("TODO: implement colorValue")
+    do {
+      try Validator.validateHexColor(rawColorValue)
+    } catch {
+      throw error
+    }
+
     return .init(
-      varName: colorTokenColorName(from: variable.name),
-      hexValue: ""
+      varName: colorValueVariableName(from: variable.name),
+      hexValue: rawColorValue
     )
   }
 
@@ -95,10 +100,10 @@ private extension Mapper {
 
     let mode = collections
       .flatMap(\.modes)
-      .first(where: { $0.name == "ios" })
+      .first(where: { $0.name == "iOS" })
 
     guard let mode else {
-      throw MappingError.noMode("ios")
+      throw MappingError.noMode("iOS")
     }
 
     let spacings = try mode
