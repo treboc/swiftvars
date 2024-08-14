@@ -9,7 +9,7 @@ class TemplateTests: XCTestCase {
   func test_loadTemplate_swiftPlatform() {
     let template = SwiftVarTemplate.swiftBaseFile
     do {
-      let loadedTemplate = try Template.loadTemplate(template, platform: .swift)
+      let loadedTemplate = try Template.loadTemplate(template)
       XCTAssertNotNil(loadedTemplate)
     } catch {
       XCTFail("Failed to load template: \(error)")
@@ -19,7 +19,7 @@ class TemplateTests: XCTestCase {
   func test_loadTemplate_kotlinPlatform() {
     let template = SwiftVarTemplate.kotlinThemeFile
     do {
-      let loadedTemplate = try Template.loadTemplate(template, platform: .kotlin)
+      let loadedTemplate = try Template.loadTemplate(template)
       XCTAssertNotNil(loadedTemplate)
     } catch {
       XCTFail("Failed to load template: \(error)")

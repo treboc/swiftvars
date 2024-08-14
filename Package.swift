@@ -26,9 +26,6 @@ let package = Package(
         .product(name: "Yams", package: "Yams"),
         .product(name: "ColorizeSwift", package: "ColorizeSwift")
       ],
-      resources: [
-        .copy("templates")
-      ],
       plugins: [
         .plugin(name: "SwiftLint", package: "SwiftLintPlugin")
       ]

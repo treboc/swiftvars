@@ -5,56 +5,19 @@
 import Foundation
 
 extension String {
-  // MARK: - Color Token
-
-  mutating func toColorTokenVarName(colorMode: ColorMode) -> String {
-    var parts = replaceChars()
-      .split(separator: "/")
-      .map(String.init)
-
-    parts.insert(colorMode.rawValue, at: 0)
-
-    return parts.toCamelCase()
-  }
-
-  mutating func toColorTokenColorName() -> String {
-    let prefixes = ["color/"]
-
-    for prefix in prefixes {
-      self = replacingOccurrences(of: prefix, with: "")
+  func substringFromLastOccurrence(of character: Character) -> String {
+    guard self.contains(character), self.count > 1 else {
+      return self
     }
 
-    return replacingOccurrences(of: "-", with: "/")
-      .split(separator: "/")
-      .map(String.init)
-      .toCamelCase()
-  }
-
-  // MARK: - Radius
-
-  mutating func toSwiftRadiusVarName() -> String {
-    replacingOccurrences(of: "-", with: "")
-  }
-
-  mutating func toKotlinRadiusVarName() -> String {
-    replacingOccurrences(of: "-", with: "")
-      .capitalizeFirst
-  }
-
-  // MARK: - Spacing
-
-  mutating func toSwiftSpacingVarName() -> String {
-    replacingOccurrences(of: "-", with: "")
-  }
-
-  mutating func toKotlinSpacingVarName() -> String {
-    replacingOccurrences(of: "-", with: "")
-      .capitalizeFirst
+    let index = lastIndex(of: character) ?? startIndex
+    let indexAfterCharacter = self.index(after: index)
+    return String(self[indexAfterCharacter...])
   }
 }
 
 extension [String] {
-  func toCamelCase() -> String {
+  func toUpperCamelCase() -> String {
     return map(\.capitalizeFirst)
       .joined()
   }
@@ -69,20 +32,6 @@ extension [String] {
       .joined()
 
     return firstPart.lowercased() + capitalizedPart
-  }
-}
-
-// MARK: - Private
-
-private extension String {
-  static let charsToReplace = [" ", "+", "-"]
-
-  mutating func replaceChars() -> String {
-    for char in Self.charsToReplace {
-      self = replacingOccurrences(of: char, with: "/")
-    }
-
-    return self
   }
 }
 

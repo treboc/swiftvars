@@ -5,16 +5,25 @@
 import PathKit
 import Stencil
 
-extension Template {
-  static let environment = Environment(loader: FileSystemLoader(paths: [.templatesPath]), trimBehaviour: .smart)
+private class SwiftSpacingFileStringLoader: Loader {
+  func loadTemplate(name: String, environment: Environment) throws -> Template {
+    guard let swiftVarTemplate = SwiftVarTemplate(rawValue: name) else {
+      throw TemplateDoesNotExist(templateNames: [name], loader: self)
+    }
 
-  static func loadTemplate(_ template: SwiftVarTemplate, platform: Platform) throws -> Template {
-    let path = Path(components: [platform.folderName, template.templateFileName])
-    return try environment.loadTemplate(name: path.string)
+    return Template(templateString: swiftVarTemplate.templateString)
+  }
+}
+
+extension Template {
+  static var environment = Environment(loader: SwiftSpacingFileStringLoader())
+
+  static func loadTemplate(_ template: SwiftVarTemplate) throws -> Template {
+    try environment.loadTemplate(name: template.rawValue)
   }
 
-  static func renderTemplate(_ template: SwiftVarTemplate, platform: Platform, context: [String: Any] = [:]) throws -> String {
-    let template = try loadTemplate(template, platform: platform)
+  static func renderTemplate(_ template: SwiftVarTemplate, context: [String: Any] = [:]) throws -> String {
+    let template = try loadTemplate(template)
     return try template.render(context)
   }
 }

@@ -5,34 +5,12 @@
 import Foundation
 
 extension Mapper {
-  static func toKotlinModel(_ model: VariablesModel) throws -> KotlinModel {
+  func toKotlinModel(_ model: VariablesModel) throws -> KotlinModel {
     let version = model.version
-    let colorTokens = try model.collections
-      .filter({ $0.name == Constants.kColorTokenCollectionName })
-      .flatMap(\.modes)
-      .flatMap { mode in
-        try mode.variables
-          .map { variable in
-            guard let colorMode = ColorMode(rawValue: mode.name) else {
-              throw MappingError.noColorModeName(mode.name)
-            }
-            return try Mapper.toColorToken(variable, colorMode: colorMode)
-          }
-      }
-
-    let colorValues = try model.collections
-      .filter { $0.name == Constants.kColorValueCollectionName }
-      .flatMap(\.modes)
-      .flatMap(\.variables)
-      .map(toColorValue)
-
-    let radii = try model.collections
-      .filter { $0.name == Constants.kRadiusCollectionName }
-      .flatMap(\.modes)
-      .flatMap(\.variables)
-      .map(toKotlinRadius)
-
-    let spacings = try toSpacings(model.collections)
+    let colorTokens = try colorTokens(from: model)
+    let colorValues = try colorValues(from: model)
+    let radii = try radii(from: model)
+    let spacings = try spacings(from: model)
 
     return KotlinModel(
       version: version,
@@ -47,8 +25,67 @@ extension Mapper {
 // MARK: - Private
 
 private extension Mapper {
-  static func toColorValue(_ variable: Variable) throws -> ColorValue {
-    var name = variable.name
+  func colorTokens(from model: VariablesModel) throws -> [ColorToken] {
+    guard let collection = model.collections.first(where: { $0.name == Constants.kColorTokenCollectionName }) else {
+      throw MappingError.missingCollection(Constants.kColorTokenCollectionName)
+    }
+
+    return try collection
+      .modes
+      .flatMap { mode in
+        try mode.variables
+          .map { variable in
+            guard let colorMode = ColorMode(rawValue: mode.name) else {
+              throw MappingError.noColorModeName(mode.name)
+            }
+            return try toColorToken(variable, colorMode: colorMode)
+          }
+      }
+  }
+
+  func colorValues(from model: VariablesModel) throws -> [ColorValue] {
+    guard let collection = model.collections.first(where: { $0.name == Constants.kColorValueCollectionName }) else {
+      throw MappingError.missingCollection(Constants.kColorValueCollectionName)
+    }
+
+    return try collection
+      .modes
+      .flatMap(\.variables)
+      .map(toColorValue)
+  }
+
+  func radii(from model: VariablesModel) throws -> [KotlinModel.Radius] {
+    guard let collection = model.collections.first(where: { $0.name == Constants.kRadiusCollectionName }) else {
+      throw MappingError.missingCollection(Constants.kRadiusCollectionName)
+    }
+
+    return try collection
+      .modes
+      .flatMap(\.variables)
+      .map(toRadius)
+  }
+
+  func spacings(from model: VariablesModel) throws -> [KotlinModel.Spacing] {
+    guard let collection = model.collections.first(where: { $0.name == Constants.kSpacingCollectionName }) else {
+      throw MappingError.missingCollection(Constants.kSpacingCollectionName)
+    }
+
+    guard let mode = collection.modes.first(where: { $0.name == "Android" }) else {
+      throw MappingError.noMode("Android")
+    }
+
+    let spacings = try mode
+      .variables
+      .map(toSpacing)
+
+    guard !spacings.isEmpty else {
+      throw MappingError.noSpacings
+    }
+
+    return spacings
+  }
+
+  func toColorValue(_ variable: Variable) throws -> ColorValue {
     let rawColorValue: String?
 
     if case let .stringValue(value) = variable.value {
@@ -62,13 +99,18 @@ private extension Mapper {
     }
 
     return ColorValue(
-      varName: name.toColorTokenColorName(),
-      hexValue: rawColorValue
+      varName: colorValueVariableName(from: variable.name),
+      hexValue: toHex(rawColorValue)
     )
   }
 
-  static func toKotlinHex(_ string: String) throws -> String {
-    try Validator.validateHexColor(string)
+  func toHex(_ string: String) -> String {
+    do {
+      try Validator.validateHexColor(string)
+    } catch {
+      Logger.fatal("Failed to validate hex color: \(string)")
+    }
+
     let string = string.replacingOccurrences(of: "#", with: "").uppercased()
 
     if string.count == 3 {
@@ -85,8 +127,7 @@ private extension Mapper {
     return "0x" + string
   }
 
-  static func toKotlinRadius(_ variable: Variable) throws -> KotlinModel.Radius {
-    var name = variable.name
+  func toRadius(_ variable: Variable) throws -> KotlinModel.Radius {
     let rawRadiusValue: Int?
 
     if case let .numberValue(value) = variable.value {
@@ -100,39 +141,12 @@ private extension Mapper {
     }
 
     return KotlinModel.Radius(
-      varName: name.toKotlinRadiusVarName(),
+      varName: radiusVariableName(from: variable.name),
       radius: rawRadiusValue
     )
   }
 
-  static func toSpacings(_ collections: [Collection]) throws -> [KotlinModel.Spacing] {
-    let collections = collections.filter({ $0.name == Constants.kSpacingCollectionName })
-
-    guard !collections.isEmpty else {
-      throw MappingError.noCollection(Constants.kSpacingCollectionName)
-    }
-
-    let mode = collections
-      .flatMap(\.modes)
-      .first(where: { $0.name == "Android" })
-
-    guard let mode else {
-      throw MappingError.noMode("Android")
-    }
-
-    let spacings = try mode
-      .variables
-      .map(toSpacing)
-
-    guard !spacings.isEmpty else {
-      throw MappingError.noSpacings
-    }
-
-    return spacings
-  }
-
-  static func toSpacing(_ variable: Variable) throws -> KotlinModel.Spacing {
-    var name = variable.name
+  func toSpacing(_ variable: Variable) throws -> KotlinModel.Spacing {
     let rawRadiusValue: Int?
 
     if case let .numberValue(value) = variable.value {
@@ -146,7 +160,7 @@ private extension Mapper {
     }
 
     return KotlinModel.Spacing(
-      varName: name.toKotlinSpacingVarName(),
+      varName: spacingVariableName(from: variable.name),
       spacing: rawRadiusValue
     )
   }

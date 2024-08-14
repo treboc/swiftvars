@@ -2,8 +2,6 @@
 //  
 //
 
-import Foundation
-
 enum ColorMode: String {
   case light = "Light"
   case dark = "Dark"
