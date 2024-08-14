@@ -5,16 +5,23 @@ name: Build Release
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: ["develop"]
   pull_request:
-    branches: [ "develop" ]
+    branches: ["develop"]
 
 jobs:
   build:
-
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build
-      run: xcodebuild "-scheme" "swiftvars" "GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES" "GCC_GENERATE_TEST_COVERAGE_FILES=YES" "clean" "build" "test" "-destination" "platform=macOS,arch=arm64,id=0000FE00-F0C1ADCFE93A0FD7" "COMPILER_INDEX_STORE_ENABLE=NO" "CODE_SIGNING_ALLOWED=NO" "-skipPackagePluginValidation"
+      - uses: actions/checkout@v4
+      - name: Build
+        run: >
+          xcodebuild "-scheme" "swiftvars"
+          "clean" "build" "test"
+          "GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES" 
+          "GCC_GENERATE_TEST_COVERAGE_FILES=YES" 
+          "-destination" "platform=macOS,arch=arm64,id=0000FE00-F0C1ADCFE93A0FD7"
+          "COMPILER_INDEX_STORE_ENABLE=NO" 
+          "CODE_SIGNING_ALLOWED=NO"
+          "-skipPackagePluginValidation"
