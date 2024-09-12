@@ -91,7 +91,7 @@ private extension Mapper {
     if case let .stringValue(value) = variable.value {
       rawColorValue = value
     } else {
-      throw MappingError.invalidValue(variable.value)
+      throw MappingError.invalidValue(String(describing: variable.value))
     }
 
     guard let rawColorValue else {
@@ -106,7 +106,7 @@ private extension Mapper {
 
   func toHex(_ string: String) -> String {
     do {
-      try Validator.validateHexColor(string)
+      try validator.validateHexColor(string)
     } catch {
       Logger.fatal("Failed to validate hex color: \(string)")
     }
@@ -133,7 +133,7 @@ private extension Mapper {
     if case let .numberValue(value) = variable.value {
       rawRadiusValue = Int(value)
     } else {
-      throw MappingError.invalidValue(variable.value)
+      throw MappingError.invalidValue(String(describing: variable.value))
     }
 
     guard let rawRadiusValue else {
@@ -152,7 +152,7 @@ private extension Mapper {
     if case let .numberValue(value) = variable.value {
       rawRadiusValue = Int(value)
     } else {
-      throw MappingError.invalidValue(variable.value)
+      throw MappingError.invalidValue(String(describing: variable.value))
     }
 
     guard let rawRadiusValue else {

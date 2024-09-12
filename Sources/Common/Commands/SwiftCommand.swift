@@ -18,24 +18,25 @@ struct SwiftCommand: ParsableCommand {
     Logger.info("Starting Swift command...")
     let config = ConfigLoader.loadConfig(atPath: unwrappedConfigPath)
 
-    let mapper = Mapper(platform: .swift)
+    let mapper = Mapper(validator: Validator(), platform: .swift)
+    let templateLoader = TemplateLoader()
 
     let variablesModel = try decodeVariablesFile(config.sourceDir)
     let swiftModel = try mapper.toSwiftModel(variablesModel)
 
-    let renderedBaseFile = try renderBaseFile(model: swiftModel)
+    let renderedBaseFile = try renderBaseFile(loader: templateLoader, model: swiftModel)
     let renderedBaseFileDest = Path(components: [config.destinationDir, SwiftVarTemplate.swiftBaseFile.outputFileName])
 
-    let renderedColorFile = try renderColorFile(model: swiftModel)
+    let renderedColorFile = try renderColorFile(loader: templateLoader, model: swiftModel)
     let renderedColorFileDest = Path(components: [config.destinationDir, SwiftVarTemplate.swiftColorsFile.outputFileName])
 
-    let renderedColorValuesFile = try renderColorValuesFile(model: swiftModel)
+    let renderedColorValuesFile = try renderColorValuesFile(loader: templateLoader, model: swiftModel)
     let renderedColorValuesFileDest = Path(components: [config.destinationDir, SwiftVarTemplate.swiftColorValuesFile.outputFileName])
 
-    let renderedRadiusFile = try renderRadiusFile(model: swiftModel)
+    let renderedRadiusFile = try renderRadiusFile(loader: templateLoader, model: swiftModel)
     let renderedRadiusFileDest = Path(components: [config.destinationDir, SwiftVarTemplate.swiftRadiusFile.outputFileName])
 
-    let renderedSpacingsFile = try renderSpacingsFile(model: swiftModel)
+    let renderedSpacingsFile = try renderSpacingsFile(loader: templateLoader, model: swiftModel)
     let renderedSpacingsFileDest = Path(components: [config.destinationDir, SwiftVarTemplate.swiftSpacingFile.outputFileName])
 
     try renderedBaseFile.write(toFile: renderedBaseFileDest.string, atomically: true, encoding: .utf8)
@@ -66,47 +67,47 @@ private extension SwiftCommand {
     return model
   }
 
-  func renderBaseFile(model: SwiftModel) throws -> String {
+  func renderBaseFile(loader: TemplateLoaderProtocol, model: SwiftModel) throws -> String {
     let context: [String: Any] = [
       "version": model.version
     ]
 
-    return try Template.renderTemplate(.swiftBaseFile, context: context)
+    return try loader.renderTemplate(.swiftBaseFile, context: context)
   }
 
-  func renderColorFile(model: SwiftModel) throws -> String {
+  func renderColorFile(loader: TemplateLoaderProtocol, model: SwiftModel) throws -> String {
     let context: [String: Any] = [
       "version": model.version,
       "colors": model.colorTokens
     ]
 
-    return try Template.renderTemplate(.swiftColorsFile, context: context)
+    return try loader.renderTemplate(.swiftColorsFile, context: context)
   }
 
-  func renderColorValuesFile(model: SwiftModel) throws -> String {
+  func renderColorValuesFile(loader: TemplateLoaderProtocol, model: SwiftModel) throws -> String {
     let context: [String: Any] = [
       "version": model.version,
       "colors": model.colorValues
     ]
 
-    return try Template.renderTemplate(.swiftColorValuesFile, context: context)
+    return try loader.renderTemplate(.swiftColorValuesFile, context: context)
   }
 
-  func renderRadiusFile(model: SwiftModel) throws -> String {
+  func renderRadiusFile(loader: TemplateLoaderProtocol, model: SwiftModel) throws -> String {
     let context: [String: Any] = [
       "version": model.version,
       "radii": model.radii
     ]
 
-    return try Template.renderTemplate(.swiftRadiusFile, context: context)
+    return try loader.renderTemplate(.swiftRadiusFile, context: context)
   }
 
-  func renderSpacingsFile(model: SwiftModel) throws -> String {
+  func renderSpacingsFile(loader: TemplateLoaderProtocol, model: SwiftModel) throws -> String {
     let context: [String: Any] = [
       "version": model.version,
       "spacings": model.spacings
     ]
 
-    return try Template.renderTemplate(.swiftSpacingFile, context: context)
+    return try loader.renderTemplate(.swiftSpacingFile, context: context)
   }
 }

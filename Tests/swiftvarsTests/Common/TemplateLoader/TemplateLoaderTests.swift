@@ -1,28 +1,17 @@
-import XCTest
 import PathKit
 import Stencil
+import Testing
 @testable import swiftvars
 
-class TemplateTests: XCTestCase {
-  var environment: Environment!
+struct TemplateTests {
+  let sut = TemplateLoader()
 
-  func test_loadTemplate_swiftPlatform() {
-    let template = SwiftVarTemplate.swiftBaseFile
-    do {
-      let loadedTemplate = try Template.loadTemplate(template)
-      XCTAssertNotNil(loadedTemplate)
-    } catch {
-      XCTFail("Failed to load template: \(error)")
-    }
-  }
-
-  func test_loadTemplate_kotlinPlatform() {
-    let template = SwiftVarTemplate.kotlinThemeFile
-    do {
-      let loadedTemplate = try Template.loadTemplate(template)
-      XCTAssertNotNil(loadedTemplate)
-    } catch {
-      XCTFail("Failed to load template: \(error)")
-    }
+  @Test(
+    "theme files should be loaded without error",
+    arguments: SwiftVarTemplate.allCases
+  )
+  func loadTemplate(template: SwiftVarTemplate) throws {
+    let loadedTemplate = try sut.loadTemplate(template)
+    #expect(loadedTemplate != nil)
   }
 }

@@ -5,7 +5,7 @@
 import PathKit
 import Stencil
 
-private class SwiftSpacingFileStringLoader: Loader {
+private class StringTemplateLoader: Loader {
   func loadTemplate(name: String, environment: Environment) throws -> Template {
     guard let swiftVarTemplate = SwiftVarTemplate(rawValue: name) else {
       throw TemplateDoesNotExist(templateNames: [name], loader: self)
@@ -15,14 +15,23 @@ private class SwiftSpacingFileStringLoader: Loader {
   }
 }
 
-extension Template {
-  static var environment = Environment(loader: SwiftSpacingFileStringLoader())
+protocol TemplateLoaderProtocol {
+  func loadTemplate(_ template: SwiftVarTemplate) throws -> Template
+  func renderTemplate(_ template: SwiftVarTemplate, context: [String: Any]) throws -> String
+}
 
-  static func loadTemplate(_ template: SwiftVarTemplate) throws -> Template {
-    try environment.loadTemplate(name: template.rawValue)
+final class TemplateLoader: TemplateLoaderProtocol {
+  let environment: Environment
+
+  init(loader: Loader = StringTemplateLoader()) {
+    self.environment = Environment(loader: loader)
   }
 
-  static func renderTemplate(_ template: SwiftVarTemplate, context: [String: Any] = [:]) throws -> String {
+  func loadTemplate(_ template: SwiftVarTemplate) throws -> Template {
+    try self.environment.loadTemplate(name: template.rawValue)
+  }
+
+  func renderTemplate(_ template: SwiftVarTemplate, context: [String: Any]) throws -> String {
     let template = try loadTemplate(template)
     return try template.render(context)
   }

@@ -24,8 +24,8 @@ enum HexColorError: Error, CustomStringConvertible {
   }
 }
 
-enum Validator {
-  static func validateHexColor(_ hex: String) throws {
+final class Validator {
+  func validateHexColor(_ hex: String) throws {
     if hex.isEmpty {
       throw HexColorError.emptyString
     }

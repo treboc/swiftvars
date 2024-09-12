@@ -24,7 +24,12 @@ extension [String] {
 
   func toLowerCamelCase() -> String {
     guard count > 1, let firstPart = first else {
-      return joined()
+      let string = joined()
+      guard let firstChar = string.first?.lowercased() else {
+        return string
+      }
+      let sequenceAfterFirstChar = string.dropFirst()
+      return firstChar.lowercased() + sequenceAfterFirstChar
     }
 
     let capitalizedPart = dropFirst()

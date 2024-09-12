@@ -5,8 +5,8 @@
 import Foundation
 
 enum MappingError: Error {
-  case invalidValue(Codable)
-  case invalidCollection(Codable)
+  case invalidValue(String)
+  case invalidCollection(String?)
   case missingCollection(String)
   case noMode(String)
   case noColorName
@@ -20,7 +20,7 @@ enum MappingError: Error {
       "Invalid value: \(valueUnion)"
 
     case let .invalidCollection(collection):
-      "Invalid collection: \(collection)"
+      "Invalid collection: \(collection ?? "")"
 
     case let .missingCollection(name):
       "No collection found with name: \(name)"

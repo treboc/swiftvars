@@ -2,27 +2,29 @@
 //
 //
 
-import XCTest
+import Testing
 @testable import swiftvars
 
-final class StringExtensionsTests: XCTestCase {
-  func test_toUpperCamelCasee() {
-    let input = ["hello", "world"]
-    let result = input.toUpperCamelCase()
-    XCTAssertEqual(result, "HelloWorld")
-
-    let input2 = ["swift", "rocks"]
-    let result2 = input2.toUpperCamelCase()
-    XCTAssertEqual(result2, "SwiftRocks")
+struct StringExtensionsTest {
+  @Test(
+    "toUpperCamelCase should return correct result",
+    arguments: [
+      (["hello", "world"], "HelloWorld"),
+      (["swift", "rocks"], "SwiftRocks")
+    ]
+  )
+  func toUpperCamelCase(input: [String], output: String) {
+    #expect(input.toUpperCamelCase() == output)
   }
 
-  func test_toLowerCamelCase() {
-    let input = ["hello", "world"]
-    let result = input.toLowerCamelCase()
-    XCTAssertEqual(result, "helloWorld")
-
-    let input2 = ["swift", "rocks"]
-    let result2 = input2.toLowerCamelCase()
-    XCTAssertEqual(result2, "swiftRocks")
+  @Test(
+    "toLowerCamelCase should return correct result",
+    arguments: [
+      (["hello", "world"], "helloWorld"),
+      (["swift", "rocks"], "swiftRocks")
+    ]
+  )
+  func toLowerCamelCase(input: [String], output: String) {
+    #expect(input.toLowerCamelCase() == output)
   }
 }

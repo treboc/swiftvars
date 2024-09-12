@@ -2,14 +2,13 @@
 //
 //
 
-import XCTest
 import Foundation
-import Yams // Assuming you're using Yams for YAML parsing
 import PathKit
-
+import Testing
+import Yams
 @testable import swiftvars
 
-class ConfigLoaderTests: XCTestCase {
+struct ConfigLoaderTests {
   let validYAML = """
     sourceDir: "/src"
     destinationDir: "/dest"
@@ -21,13 +20,38 @@ class ConfigLoaderTests: XCTestCase {
     destinationDir: - /dest
     """
 
+  @Test
+  func loadConfigWithValidYAML() {
+    let tempFilePath = createTempFile(withContent: validYAML)
+
+    let config = ConfigLoader.loadConfig(atPath: tempFilePath.parent())
+    #expect(config.sourceDir == "/src")
+    #expect(config.destinationDir == "/dest")
+
+    deleteTempFile(atPath: tempFilePath)
+  }
+
+  @Test(
+    "`ConfigLoaderError` should return correct error description",
+    arguments: [
+      (ConfigLoaderError.fileNotFound, "Config file not found, make sure it exists in your current directory, or in the specified path"),
+      (ConfigLoaderError.invalidFile, "Invalid config file, check format please.")
+    ]
+  )
+  func configLoaderErrorDescription(error: ConfigLoaderError, description: String) {
+    #expect(error.description == description)
+  }
+}
+
+// MARK: - Helper
+extension ConfigLoaderTests {
   func createTempFile(withContent content: String) -> Path {
     let tempDir = Path(NSTemporaryDirectory())
     let filePath = tempDir + Constants.configFileName
     do {
       try filePath.write(content)
     } catch {
-      XCTFail("Failed to create temp file: \(error)")
+      Issue.record("Failed to create temp file: \(error)")
     }
     return filePath
   }
@@ -36,27 +60,7 @@ class ConfigLoaderTests: XCTestCase {
     do {
       try path.delete()
     } catch {
-      XCTFail("Failed to delete temp file: \(error)")
+      Issue.record("Failed to delete temp file: \(error)")
     }
-  }
-
-  func test_loadConfig_validConfigFile() {
-    let tempFilePath = createTempFile(withContent: validYAML)
-
-    let config = ConfigLoader.loadConfig(atPath: tempFilePath.parent())
-    XCTAssertEqual(config.sourceDir, "/src")
-    XCTAssertEqual(config.destinationDir, "/dest")
-
-    deleteTempFile(atPath: tempFilePath)
-  }
-
-  func test_ConfigLoaderError_fileNotFoundDescription() {
-    let error: ConfigLoaderError = .fileNotFound
-    XCTAssertEqual(error.description, "Config file not found, make sure it exists in your current directory, or in the specified path")
-  }
-
-  func test_ConfigLoaderError_invalidFileDescription() {
-    let error: ConfigLoaderError = .invalidFile
-    XCTAssertEqual(error.description, "Invalid config file, check format please.")
   }
 }

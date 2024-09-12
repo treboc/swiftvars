@@ -21,6 +21,7 @@ protocol MapperProtocol {
 }
 
 struct Mapper: MapperProtocol {
+  let validator: Validator
   let platform: Platform
 
   func toColorToken(_ variable: Variable, colorMode: ColorMode) throws -> ColorToken {
@@ -30,12 +31,12 @@ struct Mapper: MapperProtocol {
       rawColorName = value
     } else if case let .objectValue(value) = variable.value {
       guard value.collection == .primitives else {
-        throw MappingError.invalidCollection(value.collection)
+        throw MappingError.invalidCollection(value.collection?.rawValue)
       }
 
       rawColorName = value.name
     } else {
-      throw MappingError.invalidValue(variable.value)
+      throw MappingError.invalidValue(String(describing: variable.value))
     }
 
     guard let rawColorName, !rawColorName.isEmpty else {

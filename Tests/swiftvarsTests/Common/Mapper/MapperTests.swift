@@ -2,186 +2,278 @@
 //  
 //
 
-import XCTest
+import Testing
 @testable import swiftvars
 
-final class MapperTests: XCTestCase {
-  func test_toColorToken_withStringValue() {
-    // When
-    let sut = makeSUT(platform: .kotlin)
-    let variable = Variable(name: "primaryColor", value: .stringValue("red"))
-    let colorMode = ColorMode.light
+struct MapperTests {
+  @Suite("Kotlin Mapper Tests")
+  struct KotlinMapperTests {
+    let sut = Mapper(validator: Validator(), platform: .kotlin)
 
-    do {
+    @Test
+    func toColorTokenWithStringValue() throws {
       // Given
+      let variable = Variable(name: "primaryColor", value: .stringValue("red"))
+      let colorMode = ColorMode.light
+
+      // When
       let colorToken = try sut.toColorToken(variable, colorMode: colorMode)
 
       // Then
-      XCTAssertEqual(colorToken.varName, "PrimaryColor")
-      XCTAssertEqual(colorToken.colorName, "Red")
-      XCTAssertEqual(colorToken.colorMode, colorMode)
-    } catch {
-      XCTFail("Unexpected error: \(error)")
+      #expect(colorToken.varName == "PrimaryColor")
+      #expect(colorToken.colorName == "Red")
+      #expect(colorToken.colorMode == colorMode)
     }
-  }
 
-  func test_toColorToken_withValuePrimitivesCollection() {
-    // When
-    let sut = makeSUT(platform: .kotlin)
-    let value = Variable.ValueObject(collection: .primitives, name: "blue")
-    let variable = Variable(name: "SecondaryColor", value: .objectValue(value))
-    let colorMode = ColorMode.dark
-
-    do {
+    @Test
+    func toColorTokenWithValuePrimitivesCollection() throws {
       // Given
+      let value = Variable.ValueObject(collection: .primitives, name: "blue")
+      let variable = Variable(name: "SecondaryColor", value: .objectValue(value))
+      let colorMode = ColorMode.dark
+
+      // When
       let colorToken = try sut.toColorToken(variable, colorMode: colorMode)
 
       // Then
-      XCTAssertEqual(colorToken.varName, "SecondaryColor")
-      XCTAssertEqual(colorToken.colorName, "Blue")
-      XCTAssertEqual(colorToken.colorMode, colorMode)
-    } catch {
-      XCTFail("Unexpected error: \(error)")
+      #expect(colorToken.varName == "SecondaryColor")
+      #expect(colorToken.colorName == "Blue")
+      #expect(colorToken.colorMode == colorMode)
     }
-  }
 
-  func test_toColorToken_withIntegerValue() {
-    // When
-    let sut = makeSUT(platform: .kotlin)
-    let variable = Variable(name: "invalidColor", value: .numberValue(123))
-    let colorMode = ColorMode.light
+    @Test
+    func toColorTokenWithIntegerValue() throws {
+      // Given
+      let variable = Variable(name: "invalidColor", value: .numberValue(123))
+      let colorMode = ColorMode.light
 
-    XCTAssertThrowsError(try sut.toColorToken(variable, colorMode: colorMode)) { error in
-      XCTAssertEqual(error as? MappingError, MappingError.invalidValue(Variable.Value.numberValue(123)))
+      // When
+      #expect(throws: MappingError.invalidValue(String(describing: Variable.Value.numberValue(123)))) {
+        try sut.toColorToken(variable, colorMode: colorMode)
+      }
     }
-  }
 
-  func test_toColorToken_withValueNonPrimitivesCollection() {
-    // WHen
-    let sut = makeSUT(platform: .kotlin)
-    let value = Variable.ValueObject(collection: .colorToken, name: "blue")
-    let variable = Variable(name: "secondaryColor", value: .objectValue(value))
-    let colorMode = ColorMode.dark
+    @Test
+    func toColorTokenWithNonPrimitivesCollection() throws {
+      // Given
+      let value = Variable.ValueObject(collection: .colorToken, name: "blue")
+      let variable = Variable(name: "secondaryColor", value: .objectValue(value))
+      let colorMode = ColorMode.dark
 
-    // Given
-    XCTAssertThrowsError(try sut.toColorToken(variable, colorMode: colorMode)) { error in
+      // When
+      #expect(throws: MappingError.invalidCollection(value.collection?.rawValue)) {
+        try sut.toColorToken(variable, colorMode: colorMode)
+      }
+    }
+
+    @Test
+    func toColorTokenWithEmptyString() throws {
+      // Given
+      let variable = Variable(name: "emptyColor", value: .stringValue(""))
+      let colorMode = ColorMode.light
+
+      // When
+      #expect(throws: MappingError.noColorName) {
+        try sut.toColorToken(variable, colorMode: colorMode)
+      }
+    }
+
+    @Test
+    func toColorTokenVariableNameIsUpperCameplCase() throws {
+      // Given
+      let input = "button/secondary+text/button-background-secondary-disabled"
+
+      // When
+      let result = sut.colorTokenVariableName(from: input)
+
       // Then
-      XCTAssertEqual(error as? MappingError, MappingError.invalidCollection(value.collection))
+      #expect(result == "ButtonBackgroundSecondaryDisabled")
     }
-  }
 
-  func test_toColorToken_withEmptyString() {
-    // When
-    let sut = makeSUT(platform: .kotlin)
-    let variable = Variable(name: "emptyColor", value: .stringValue(""))
-    let colorMode = ColorMode.light
+    @Test
+    func toColorTokenColorNameIsUpperCase() throws {
+      // Given
+      let input = "color/brand-primary/purple/050"
 
-    // Given
-    XCTAssertThrowsError(try sut.toColorToken(variable, colorMode: colorMode)) { error in
+      // When
+      let result = sut.colorTokenColorName(from: input)
+
       // Then
-      XCTAssertEqual(error as? MappingError, .noColorName)
+      #expect(result == "ColorBrandPrimaryPurple050")
+    }
+
+    @Test
+    func radiusVariableNameIsUpperCamelCase() throws {
+      // Given
+      let input = "radius-32"
+
+      // When
+      let result = sut.radiusVariableName(from: input)
+
+      // Then
+      #expect(result == "Radius32")
+    }
+
+    func spacingVariableNameIsUpperCamelCase() throws {
+      // Given
+      let input = "spacing-32"
+
+      // When
+      let result = sut.spacingVariableName(from: input)
+
+      // Then
+      #expect(result == "Spacing32")
     }
   }
 
-  func test_colorTokenVariableName_isUpperCamelCaseInKotlin() {
-    // When
-    let sut = makeSUT(platform: .kotlin)
-    let input = "button/secondary+text/button-background-secondary-disabled"
+  @Suite("Swift Mapper Tests")
+  struct SwiftMapperTests {
+    let sut = Mapper(validator: Validator(), platform: .swift)
 
-    // Given
-    let result = sut.colorTokenVariableName(from: input)
+    @Test
+    func toColorTokenWithStringValue() throws {
+      // Given
+      let variable = Variable(name: "primaryColor", value: .stringValue("red"))
+      let colorMode = ColorMode.light
 
-    // Then
-    XCTAssertEqual(result, "ButtonBackgroundSecondaryDisabled")
+      // When
+      let colorToken = try sut.toColorToken(variable, colorMode: colorMode)
+
+      // Then
+      #expect(colorToken.varName == "primaryColor")
+      #expect(colorToken.colorName == "red")
+      #expect(colorToken.colorMode == colorMode)
+    }
+
+    @Test
+    func toColorTokenWithValuePrimitivesCollection() throws {
+      // Given
+      let value = Variable.ValueObject(collection: .primitives, name: "blue")
+      let variable = Variable(name: "SecondaryColor", value: .objectValue(value))
+      let colorMode = ColorMode.dark
+
+      // When
+      let colorToken = try sut.toColorToken(variable, colorMode: colorMode)
+
+      // Then
+      #expect(colorToken.varName == "secondaryColor")
+      #expect(colorToken.colorName == "blue")
+      #expect(colorToken.colorMode == colorMode)
+    }
+
+    @Test
+    func toColorTokenWithIntegerValue() throws {
+      // Given
+      let variable = Variable(name: "invalidColor", value: .numberValue(123))
+      let colorMode = ColorMode.light
+
+      // When
+      #expect(throws: MappingError.invalidValue(String(describing: Variable.Value.numberValue(123)))) {
+        try sut.toColorToken(variable, colorMode: colorMode)
+      }
+    }
+
+    @Test
+    func toColorTokenWithNonPrimitivesCollection() throws {
+      // Given
+      let value = Variable.ValueObject(collection: .colorToken, name: "blue")
+      let variable = Variable(name: "secondaryColor", value: .objectValue(value))
+      let colorMode = ColorMode.dark
+
+      // When
+      #expect(throws: MappingError.invalidCollection(value.collection?.rawValue)) {
+        try sut.toColorToken(variable, colorMode: colorMode)
+      }
+    }
+
+    @Test
+    func toColorTokenWithEmptyString() throws {
+      // Given
+      let variable = Variable(name: "emptyColor", value: .stringValue(""))
+      let colorMode = ColorMode.light
+
+      // When
+      #expect(throws: MappingError.noColorName) {
+        try sut.toColorToken(variable, colorMode: colorMode)
+      }
+    }
+
+    @Test
+    func toColorTokenVariableNameIsLowerCamelCase() throws {
+      // Given
+      let input = "button/secondary+text/button-background-secondary-disabled"
+
+      // When
+      let result = sut.colorTokenVariableName(from: input)
+
+      // Then
+      #expect(result == "buttonBackgroundSecondaryDisabled")
+    }
+
+    @Test
+    func toColorTokenColorNameIsLowerCamelCase() throws {
+      // Given
+      let input = "color/brand-primary/purple/050"
+
+      // When
+      let result = sut.colorTokenColorName(from: input)
+
+      // Then
+      #expect(result == "colorBrandPrimaryPurple050")
+    }
+
+    @Test
+    func radiusVariableNameIsLowerCamelCase() throws {
+      // Given
+      let input = "radius-32"
+
+      // When
+      let result = sut.radiusVariableName(from: input)
+
+      // Then
+      #expect(result == "radius32")
+    }
+
+    func spacingVariableNameIsLowerCamelCase() throws {
+      // Given
+      let input = "spacing-32"
+
+      // When
+      let result = sut.spacingVariableName(from: input)
+
+      // Then
+      #expect(result == "spacing32")
+    }
   }
 
-  func test_colorTokenColorName_isLowerCamelCaseInSwift() {
-    // When
-    let sut = makeSUT(platform: .swift)
-    let input = "button/secondary+text/button-background-secondary-disabled"
+  @Suite("Mapping Error Tests")
+  struct MappingErrorTests {
+    static let equalArguments: [(MappingError, MappingError)] = [
+      (MappingError.invalidValue("123"), MappingError.invalidValue("123")),
+      (MappingError.invalidCollection("Collection1"), MappingError.invalidCollection("Collection1")),
+      (MappingError.noColorName, MappingError.noColorName),
+      (MappingError.noColorModeName("unexpected"), MappingError.noColorModeName("unexpected")),
+      (MappingError.noRadiusValue, MappingError.noRadiusValue),
+      (MappingError.noSpacings, MappingError.noSpacings)
+    ]
 
-    // Given
-    let result = sut.colorTokenVariableName(from: input)
+    static let descriptionArguments: [(MappingError, String)] = [
+      (MappingError.invalidValue(123.description), "Invalid value: 123"),
+      (MappingError.invalidCollection("nonPrimitiveCollection"), "Invalid collection: nonPrimitiveCollection"),
+      (MappingError.noColorName, "Unable to get colorName from value"),
+      (MappingError.noColorModeName("unexpected"), "Unable to get colorModeName from value, found: unexpected, expected: light/dark"),
+      (MappingError.noRadiusValue, "Unable to get radiusValue from value"),
+      (MappingError.noSpacings, "No spacings found")
+      ]
 
-    // Then
-    XCTAssertEqual(result, "buttonBackgroundSecondaryDisabled")
-  }
+    @Test("Equality Test", arguments: equalArguments)
+    func equality(lhs: MappingError, rhs: MappingError) {
+      #expect(lhs == rhs)
+    }
 
-  func test_colorTokenColorName_isUpperCamelCaseInKotlin() {
-    // When
-    let sut = makeSUT(platform: .kotlin)
-    let input = "color/brand-primary/purple/050"
-
-    // Given
-    let result = sut.colorTokenColorName(from: input)
-
-    // Then
-    XCTAssertEqual(result, "ColorBrandPrimaryPurple050")
-  }
-
-  func test_colorTokenColorName_isLoweCamelCaseInSwift() {
-    // When
-    let sut = makeSUT(platform: .swift)
-    let input = "color/brand-primary/purple/050"
-
-    // Given
-    let result = sut.colorTokenColorName(from: input)
-
-    // Then
-    XCTAssertEqual(result, "colorBrandPrimaryPurple050")
-  }
-
-  func test_radiusVariableName_isUpperCamelCaseInKotlin() {
-    // When
-    let sut = makeSUT(platform: .kotlin)
-    let input = "radius-32"
-
-    // Given
-    let result = sut.radiusVariableName(from: input)
-
-    // Then
-    XCTAssertEqual(result, "Radius32")
-  }
-
-  func test_radiusVariableName_isLowerCamelCaseInSwift() {
-    // When
-    let sut = makeSUT(platform: .swift)
-    let input = "radius-32"
-
-    // Given
-    let result = sut.radiusVariableName(from: input)
-
-    // Then
-    XCTAssertEqual(result, "radius32")
-  }
-
-  func test_spacingVariableName_isUpperCamelCaseInKotlin() {
-    // When
-    let sut = makeSUT(platform: .kotlin)
-    let input = "spacing-32"
-
-    // Given
-    let result = sut.spacingVariableName(from: input)
-
-    // Then
-    XCTAssertEqual(result, "Spacing32")
-  }
-
-  func test_spacingVariableName_isLowerCamelCaseInSwift() {
-    // When
-    let sut = makeSUT(platform: .swift)
-    let input = "spacing-32"
-
-    // Given
-    let result = sut.spacingVariableName(from: input)
-
-    // Then
-    XCTAssertEqual(result, "spacing32")
-  }
-}
-
-extension MapperTests {
-  func makeSUT(platform: Platform) -> MapperProtocol {
-    Mapper(platform: platform)
+    @Test("Description Test", arguments: descriptionArguments)
+    func description(error: MappingError, description: String) {
+      #expect(error.description == description)
+    }
   }
 }

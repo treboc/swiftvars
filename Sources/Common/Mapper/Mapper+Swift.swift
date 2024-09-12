@@ -53,7 +53,7 @@ private extension Mapper {
     if case let .stringValue(value) = variable.value {
       rawColorValue = value
     } else {
-      throw MappingError.invalidValue(variable.value)
+      throw MappingError.invalidValue(String(describing: variable.value))
     }
 
     guard let rawColorValue else {
@@ -61,7 +61,7 @@ private extension Mapper {
     }
 
     do {
-      try Validator.validateHexColor(rawColorValue)
+      try validator.validateHexColor(rawColorValue)
     } catch {
       throw error
     }
@@ -78,7 +78,7 @@ private extension Mapper {
     if case let .numberValue(value) = variable.value {
       rawRadiusValue = Int(value)
     } else {
-      throw MappingError.invalidValue(variable.value)
+      throw MappingError.invalidValue(String(describing: variable.value))
     }
 
     guard let rawRadiusValue else {
@@ -123,7 +123,7 @@ private extension Mapper {
     if case let .numberValue(value) = variable.value {
       rawRadiusValue = Int(value)
     } else {
-      throw MappingError.invalidValue(variable.value)
+      throw MappingError.invalidValue(String(describing: variable.value))
     }
 
     guard let rawRadiusValue else {
